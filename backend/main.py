@@ -4,10 +4,17 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.config import get_settings
-from backend.database import check_database_connection
+from backend.database import check_database_connection, engine, Base
+import backend.models  # Register all database models
 
 settings = get_settings()
 app = FastAPI(title="Quiz Assessment Platform API", version="0.1.0", description="Backend API for the Quiz Assessment Platform.")
+
+# Automatically create tables if database is available
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception:
+    pass
 
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origin_list, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
