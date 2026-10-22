@@ -1,0 +1,253 @@
+/* ==========================================================================
+   Quiz Assessment Platform - Authentication Styles (Login & Register)
+   ========================================================================== */
+
+.auth-wrapper {
+  min-height: calc(100vh - 4.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.04) 0%, transparent 40%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xl);
+  padding: 2.5rem;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header .brand-icon {
+  margin: 0 auto 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-lg);
+}
+
+.auth-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-navy-900);
+  margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+/* Role Selector Segmented Control */
+.role-selector-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.role-selector-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-slate-500);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.role-selector {
+  display: flex;
+  background: var(--color-slate-100);
+  padding: 0.3125rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-slate-200);
+  position: relative;
+}
+
+.role-option {
+  flex: 1;
+  text-align: center;
+}
+
+.role-option input[type="radio"] {
+  display: none;
+}
+
+.role-option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5625rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-slate-600);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.role-option input[type="radio"]:checked + label {
+  background: var(--color-white);
+  color: var(--color-indigo-600);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Password Input with Visibility Toggle */
+.password-input-group {
+  position: relative;
+}
+
+.password-input-group .form-control {
+  padding-right: 2.75rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-slate-400);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+  color: var(--color-navy-800);
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 0.5rem;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 0.25rem;
+  height: 4px;
+  margin-bottom: 0.35rem;
+}
+
+.strength-bar {
+  flex: 1;
+  background: var(--color-slate-200);
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-fast);
+}
+
+.strength-bar.active-weak { background: var(--color-rose-500); }
+.strength-bar.active-medium { background: var(--color-amber-500); }
+.strength-bar.active-strong { background: var(--color-emerald-500); }
+
+.strength-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-slate-500);
+}
+
+/* Remember & Forgot Row */
+.auth-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--color-navy-700);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-indigo-600);
+  cursor: pointer;
+}
+
+/* Demo Autofill Section */
+.demo-accounts {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.demo-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-slate-500);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.demo-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.demo-buttons .btn {
+  flex: 1;
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.5rem;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  font-weight: 600;
+}
+
+/* Alert Box */
+.auth-alert {
+  display: none;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-alert.is-visible {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-alert-error {
+  background: var(--color-rose-50);
+  border: 1px solid #fecdd3;
+  color: var(--color-rose-600);
+}
+
+.auth-alert-success {
+  background: var(--color-emerald-50);
+  border: 1px solid #a7f3d0;
+  color: var(--color-emerald-600);
+}
+
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 1.75rem 1.25rem;
+  }
+}
