@@ -1,58 +1,69 @@
 /* ==========================================================================
    Quiz Assessment Platform - Global Design System & Core Styles
+   
+   👋 HELLO TEAMMATE! Welcome to the styles file.
+   Here is how this file is organized:
+   1. :root -> This is where all THEME COLORS and FONTS live.
+      If you want to change the primary button color or theme, change --color-indigo-600!
+   2. Typography & Reset -> Base styles for headings (h1, h2, p, etc.)
+   3. Buttons & Cards -> .btn and .card classes used everywhere
+   4. Badges & Forms -> Inputs, pills, and labels
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Colors */
+  /* 🎨 1. BRAND COLORS (You can customize these to match your college theme!) */
   --color-navy-950: #070d1e;
-  --color-navy-900: #0f172a;
+  --color-navy-900: #0f172a; /* Main dark background for sidebars & banners */
   --color-navy-800: #1e293b;
   --color-navy-700: #334155;
   --color-navy-600: #475569;
   
+  /* Primary Accent: Indigo (Change this to change the main button/link color!) */
   --color-indigo-600: #4f46e5;
   --color-indigo-700: #4338ca;
   --color-indigo-500: #6366f1;
   --color-indigo-50: #eef2ff;
   --color-indigo-100: #e0e7ff;
 
+  /* Secondary Accent: Violet */
   --color-violet-600: #7c3aed;
   --color-violet-500: #8b5cf6;
   --color-violet-50: #f5f3ff;
 
-  --color-emerald-500: #10b981;
+  /* Status Colors */
+  --color-emerald-500: #10b981; /* Green for Passed / Correct */
   --color-emerald-600: #059669;
   --color-emerald-50: #ecfdf5;
 
-  --color-amber-500: #f59e0b;
+  --color-amber-500: #f59e0b;   /* Yellow/Orange for Warnings / Review */
   --color-amber-600: #d97706;
   --color-amber-50: #fffbeb;
 
-  --color-rose-500: #f43f5e;
+  --color-rose-500: #f43f5e;    /* Red for Errors / Failed / Delete */
   --color-rose-600: #e11d48;
   --color-rose-50: #fff1f2;
 
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
+  --color-slate-200: #e2e8f0;   /* Borders */
   --color-slate-300: #cbd5e1;
   --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
+  --color-slate-500: #64748b;   /* Muted text */
   --color-white: #ffffff;
 
-  /* Semantic Variables */
-  --bg-primary: #f8fafc;
-  --bg-surface: #ffffff;
+  /* 💡 2. SEMANTIC VARIABLES (Used throughout components) */
+  --bg-primary: #f8fafc;        /* Main light background of the entire site */
+  --bg-surface: #ffffff;        /* White background for cards */
   --bg-subtle: #f1f5f9;
-  --border-color: #e2e8f0;
-  --border-focus: #6366f1;
+  --border-color: #e2e8f0;      /* Standard card border */
+  --border-focus: #6366f1;      /* Glow border when clicking input boxes */
   
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-main: #0f172a;         /* Main dark text */
+  --text-muted: #64748b;        /* Subtitle / secondary text */
   --text-light: #94a3b8;
-  --text-inverse: #ffffff;
+  --text-inverse: #ffffff;      /* White text on dark cards */
 
   /* Typography */
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

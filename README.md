@@ -1,123 +1,156 @@
-# Quiz Assessment Platform
+# 🎓 Quiz Assessment Platform
 
-A FastAPI and PostgreSQL backend for a quiz assessment platform. The frontend can remain a separate HTML, CSS, and vanilla JavaScript application and call this API over HTTP.
+A modern, responsive, dashboard-style web platform for conducting academic quizzes, timed assessments, and automated evaluation.
 
-## Phase 1 status
+- **Frontend**: Pure HTML5, CSS3, and vanilla JavaScript (no complex framework, beginner-friendly).
+- **Backend**: Python 3.11+, FastAPI, and SQLAlchemy.
+- **Database**: PostgreSQL (with automated schema creation and default seed data).
 
-This repository now contains the backend foundation only: configuration, the PostgreSQL connection/session layer, a CORS-enabled FastAPI application, and a health endpoint. Authentication, database models, migrations, quiz APIs, attempts, and results are reserved for following phases.
+---
 
-## Technology stack
+## 👩‍💻 Guide for Frontend Developer (Quick Start in 2 Minutes)
 
-- Python 3.11+
-- FastAPI and Uvicorn
-- PostgreSQL with SQLAlchemy and Psycopg 3
-- Pydantic Settings for environment configuration
-- Pytest and HTTPX for upcoming automated tests
-- Alembic for upcoming database migrations
+If you are working on the **Frontend (Design, HTML, CSS, JavaScript)**, you **do NOT need to install or configure PostgreSQL**. 
 
-## Project structure
+The frontend has a built-in **Offline Demo Mode** with pre-loaded mock quizzes and automatic 1-click login buttons!
+
+### Step 1: Open the Project in VS Code
+1. Open **Visual Studio Code**.
+2. Click **File ➔ Open Folder...** and select the `quiz-assessment-platform` directory.
+
+### Step 2: Start the Frontend
+Open the terminal in VS Code (`Ctrl + ~` or Terminal ➔ New Terminal) and run:
+
+```powershell
+npm start
+```
+*(Or if you prefer Python: `python -m http.server 5500 --directory frontend`)*
+
+### Step 3: View in Browser
+Open your browser and visit:
+👉 **[http://localhost:5500](http://localhost:5500)**
+
+### Step 4: Login with 1 Click
+On the [Login Page](http://localhost:5500/login.html), simply click:
+- **"Demo Student"** ➔ Click "Sign In" to test the Student Dashboard and take quizzes.
+- **"Demo Instructor"** ➔ Click "Sign In" to test creating quizzes and reviewing results.
+
+---
+
+## 🎨 Where Can the Frontend Developer Make Changes?
+
+| If you want to change... | Open this file | What to look for |
+|---|---|---|
+| **Theme Colors & Fonts** | `frontend/css/style.css` | Look at `:root` at the top: `--color-indigo-600` (primary button/accent color) |
+| **Home Page Titles & Text** | `frontend/index.html` | Look for `hero-title` and `<section id="features">` |
+| **Student Dashboard Look** | `frontend/student-dashboard.html` | Summary metric cards and sidebar navigation |
+| **Quiz Taking Screen** | `frontend/take-quiz.html` & `frontend/css/quiz.css` | Timer widget, question buttons, and question navigator palette |
+| **Quiz Creation Form** | `frontend/create-quiz.html` | Add/remove question fields and preview modal |
+| **Results & Score Gauge** | `frontend/results.html` | Circular SVG score ring and pass/fail indicators |
+
+---
+
+## 👨‍💻 Guide for Backend Developer (FastAPI + PostgreSQL)
+
+If you are working on the **Backend & Database**:
+
+### Step 1: Set Up Python Virtual Environment
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Step 2: Configure `.env`
+Ensure your `.env` file in the root folder contains your PostgreSQL credentials:
+```env
+DATABASE_URL=postgresql+psycopg://postgres:admin123@localhost:5432/quiz%20assessment
+SECRET_KEY=super_secure_random_key_of_at_least_32_characters_12345
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+CORS_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
+```
+
+### Step 3: Start the Backend Server
+```powershell
+uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### Step 4: Verify the API
+Open your browser to:
+- **Health Check**: [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health) (Returns `{"status": "ok", "database": "connected"}`)
+- **Interactive Swagger API Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) (Test every endpoint directly in the browser!)
+
+---
+
+## 🌿 Team Collaboration (Git Workflow)
+
+To avoid overwriting each other's work:
+
+### 1. Work on Separate Branches
+- **Frontend Teammate:**
+  ```powershell
+  git checkout -b frontend-design
+  ```
+- **Backend Teammate:**
+  ```powershell
+  git checkout -b backend-features
+  ```
+
+### 2. Pushing Your Changes
+When you make changes and want to share them:
+```powershell
+git add .
+git commit -m "Describe what you changed"
+git push origin <your-branch-name>
+```
+
+### 3. Merging on GitHub
+Go to GitHub ➔ Open a **Pull Request** ➔ Review the changes ➔ Click **Merge Pull Request**.
+
+---
+
+## 📁 Repository Structure
 
 ```text
-backend/
-  main.py          # FastAPI application and health endpoint
-  config.py        # Environment-based settings
-  database.py      # SQLAlchemy engine and request session dependency
-  routes/          # Future API route modules
-  services/        # Future business-logic modules
-  tests/           # Future automated tests
 frontend/
-  index.html       # Landing page (hero, features, CSS mockup, workflow)
-  login.html       # Sign-in with role toggle and demo autofill
-  register.html    # Registration with password strength meter
-  student-dashboard.html    # Student stats, active quizzes, recent attempts
-  instructor-dashboard.html # Instructor dashboard, metrics, quiz management
-  quiz-list.html   # Assessment catalog with search and filters
-  take-quiz.html   # Distraction-free quiz engine, timer, and palette
-  create-quiz.html # Dynamic question builder with option configurator
-  results.html     # Score gauge, accuracy stats, and question review
-  history.html     # Attempt history table and status filters
-  css/             # Modern design system (navy/indigo/violet)
-  js/              # Reusable API client, auth, and page controllers
-  assets/          # Vector logos and icons
-requirements.txt
-.env.example
+├── index.html                  # Landing page (hero, features, CSS mockup, workflow)
+├── login.html                  # Sign-in with role toggle and demo autofill
+├── register.html               # Registration with password strength meter
+├── student-dashboard.html      # Student stats, active quizzes, recent attempts
+├── instructor-dashboard.html   # Instructor dashboard, metrics, quiz management
+├── quiz-list.html              # Assessment catalog with search and filters
+├── take-quiz.html              # Distraction-free quiz engine, timer, and palette
+├── create-quiz.html            # Dynamic question builder with option configurator
+├── results.html                # Score gauge, accuracy stats, and question review
+├── history.html                # Attempt history table and status filters
+├── css/                        # Design tokens, typography, layouts, and quiz styles
+│   ├── style.css               # Core colors (:root), buttons, cards, modals
+│   ├── auth.css                # Login/Register styling
+│   ├── dashboard.css           # Sidebar and stats layout
+│   └── quiz.css                # Timer widget, question palette, score ring
+├── js/                         # API client, auth, and page controllers
+└── assets/images/              # Vector logos and illustrations
+
+backend/
+├── main.py                     # FastAPI entry point, CORS, and auto-seeding
+├── config.py                   # Environment settings
+├── database.py                 # SQLAlchemy engine and session dependency
+├── models.py                   # Database tables: User, Quiz, Question, QuizAttempt
+├── schemas.py                  # Pydantic validation schemas
+├── routes/                     # Modular API endpoints
+│   ├── auth.py                 # /api/auth (register, login, me)
+│   ├── quizzes.py              # /api/quizzes (list, create, sanitized questions, delete)
+│   └── attempts.py             # /api/attempts (start, submit, grade, history)
+└── services/
+    └── auth.py                 # Password hashing (Argon2) and JWT generation
 ```
 
-## Running the Frontend
+---
 
-The frontend is built using pure HTML5, CSS3, and vanilla JavaScript (no framework required). Run it using any static HTTP server:
+## 🔑 Default Test Accounts
 
-```powershell
-python -m http.server 5500 --directory frontend
-```
-
-Open your browser at `http://localhost:5500`.
-
-### Demo Credentials (Standalone Mode)
-If the backend is not yet running, the frontend automatically falls back to **Demo Mode**:
-- **Student**: `student@college.edu` (Password: `student123`)
-- **Instructor**: `instructor@college.edu` (Password: `instructor123`)
-
-## Prerequisites
-
-- Python 3.11 or newer
-- PostgreSQL 15 or newer, running locally
-
-## PostgreSQL setup (Windows PowerShell)
-
-Create a local database and application user in `psql`:
-
-```powershell
-psql -U postgres
-CREATE USER quiz_user WITH PASSWORD 'choose-a-strong-local-password';
-CREATE DATABASE quiz_platform OWNER quiz_user;
-\q
-```
-
-## Install and configure
-
-From the repository root, create and activate a virtual environment, then install dependencies:
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-Copy-Item .env.example .env
-```
-
-Edit `.env` and replace `DATABASE_URL` with your PostgreSQL credentials and `SECRET_KEY` with a unique secret of at least 32 characters. The `.env` file is ignored by Git and must never be committed.
-
-## Run and verify
-
-Start the API:
-
-```powershell
-uvicorn backend.main:app --reload
-```
-
-In another PowerShell window, verify the database connection:
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8000/api/health
-```
-
-Expected response after PostgreSQL is configured:
-
-```json
-{"status":"ok","database":"connected"}
-```
-
-Interactive API documentation is available at `http://127.0.0.1:8000/docs`.
-
-## Frontend connection
-
-During local development, the backend accepts requests from `http://localhost:5500` and `http://127.0.0.1:5500`. Change `CORS_ORIGINS` in `.env` to the actual frontend development URL before starting the server. Production deployments should allow only their exact frontend origin.
-
-## Tests
-
-Automated endpoint tests will be added with the subsequent feature phases. Once present, run them with:
-
-```powershell
-pytest backend/tests
-```
+| Role | Email | Password | What You Can Do |
+|---|---|---|---|
+| **Student** | `student@college.edu` | `student123` | Browse quizzes, attempt timed assessments, view scores |
+| **Instructor** | `instructor@college.edu` | `instructor123` | Create assessments, view class submissions, manage quizzes |
