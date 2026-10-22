@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Quiz Assessment Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <!-- Minimal Header -->
+  <header class="site-header">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span>QuizAssess</span>
+      </a>
+
+      <div class="nav-actions">
+        <div id="api-status-badge"></div>
+        <span style="font-size: 0.875rem; color: var(--text-muted);">Don't have an account?</span>
+        <a href="register.html" class="btn btn-secondary btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Main -->
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="brand-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h1>Welcome Back</h1>
+        <p>Sign in to access your assessment dashboard</p>
+      </div>
+
+      <!-- Feedback Alert -->
+      <div id="auth-alert" class="auth-alert" role="alert"></div>
+
+      <form id="login-form" novalidate>
+        <!-- Role Segmented Toggle -->
+        <div class="role-selector-wrap">
+          <span class="role-selector-label">I am signing in as</span>
+          <div class="role-selector">
+            <div class="role-option">
+              <input type="radio" name="role" id="role-student" value="student" checked>
+              <label for="role-student">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                </svg>
+                Student
+              </label>
+            </div>
+            <div class="role-option">
+              <input type="radio" name="role" id="role-instructor" value="instructor">
+              <label for="role-instructor">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1"/>
+                </svg>
+                Instructor
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+          <input type="email" id="email" class="form-control" placeholder="name@college.edu" autocomplete="email" required>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password" class="form-label">Password <span class="required">*</span></label>
+          <div class="password-input-group">
+            <input type="password" id="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="password-toggle-btn" data-target="password" aria-label="Show password">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="auth-actions-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember-me" checked>
+            <span>Remember this device</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%;">
+          Sign In
+        </button>
+
+        <!-- Instant Demo Fill Buttons -->
+        <div class="demo-accounts">
+          <div class="demo-title">Quick Demo Login (Click to Autofill)</div>
+          <div class="demo-buttons">
+            <button type="button" id="btn-demo-student" class="btn btn-secondary">
+              Demo Student
+            </button>
+            <button type="button" id="btn-demo-instructor" class="btn btn-secondary">
+              Demo Instructor
+            </button>
+          </div>
+        </div>
+
+        <div class="auth-footer">
+          Need an account? <a href="register.html">Create an account here</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Session — Quiz Assessment Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/quiz.css">
+</head>
+<body style="background-color: var(--bg-primary);">
+
+  <!-- Distraction-free Quiz Header -->
+  <header class="quiz-screen-header">
+    <div class="quiz-header-top">
+      <div style="display:flex; align-items:center; gap: 1rem;">
+        <div class="brand-icon" style="width: 2rem; height: 2rem;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h2 id="exam-title" class="quiz-exam-title">Loading Assessment...</h2>
+      </div>
+
+      <div style="display:flex; align-items:center; gap: 1rem;">
+        <!-- Countdown Timer -->
+        <div id="quiz-timer-card" class="quiz-timer" title="Time Remaining">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
+          </svg>
+          <span id="quiz-timer-display">--:--</span>
+        </div>
+
+        <button id="submit-quiz-trigger" class="btn btn-primary btn-sm">
+          Submit Assessment
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="quiz-progress-bar-wrap">
+      <div id="quiz-progress-bar" class="quiz-progress-bar"></div>
+    </div>
+    <div class="quiz-progress-meta">
+      <span id="question-counter">Question 1 of ...</span>
+      <span id="palette-answered-count">0 Answered</span>
+    </div>
+  </header>
+
+  <!-- Main Quiz Area -->
+  <main id="quiz-main-area" class="quiz-layout">
+    <!-- Question Card -->
+    <section class="question-card">
+      <div class="question-header">
+        <span class="question-number-pill">Active Question</span>
+        <button type="button" id="mark-review-btn" class="btn btn-secondary btn-sm" title="Mark this question to review later">
+          ☆ Mark for Review
+        </button>
+      </div>
+
+      <h3 id="question-text" class="question-text">
+        Loading question...
+      </h3>
+
+      <!-- 4 Option Choices -->
+      <div id="options-container" class="options-list">
+        <!-- Rendered dynamically by take-quiz.js -->
+      </div>
+
+      <!-- Action Navigation Buttons -->
+      <div class="question-actions-bar">
+        <div class="action-helpers">
+          <button type="button" id="clear-answer-btn" class="btn btn-secondary btn-sm">
+            Clear Selection
+          </button>
+        </div>
+
+        <div class="action-nav">
+          <button type="button" id="btn-prev-question" class="btn btn-secondary" disabled>
+            ← Previous
+          </button>
+          <button type="button" id="btn-next-question" class="btn btn-primary">
+            Next Question →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side Question Palette / Quick Jump -->
+    <aside class="quiz-palette-card">
+      <div class="palette-title">Question Navigator</div>
+      
+      <div class="palette-legend">
+        <div class="legend-item">
+          <span class="legend-dot dot-current"></span>
+          <span>Current</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot dot-answered"></span>
+          <span>Answered</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot dot-review"></span>
+          <span>Review</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot dot-unanswered"></span>
+          <span>Unattempted</span>
+        </div>
+      </div>
+
+      <!-- Grid of Questions 1..N -->
+      <div id="palette-grid" class="palette-grid">
+        <!-- Palette buttons rendered dynamically -->
+      </div>
+
+      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          💡 Your answers are automatically preserved throughout your session.
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/take-quiz.js"></script>
+</body>
+</html>

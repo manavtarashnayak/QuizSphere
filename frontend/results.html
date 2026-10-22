@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Results — Quiz Assessment Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/quiz.css">
+</head>
+<body style="background-color: var(--bg-primary);">
+
+  <!-- Minimal Header -->
+  <header class="site-header">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span>QuizAssess</span>
+      </a>
+
+      <div class="nav-actions">
+        <div id="api-status-badge"></div>
+        <a href="student-dashboard.html" class="btn btn-secondary btn-sm">Dashboard</a>
+        <a href="history.html" class="btn btn-primary btn-sm">Attempt History</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="results-main-content" class="results-container">
+    <!-- Hero Score Summary Card -->
+    <div class="results-hero-card">
+      <span class="badge badge-indigo" style="margin-bottom: 0.75rem;">Official Evaluation</span>
+      <h1 id="result-quiz-title" style="font-size: 1.75rem; margin-bottom: 1.5rem;">Assessment Results</h1>
+
+      <!-- Circular Progress Score Visualization -->
+      <div class="score-radial-wrap">
+        <svg class="score-radial-svg" viewBox="0 0 160 160">
+          <circle class="score-circle-bg" cx="80" cy="80" r="65"></circle>
+          <circle id="score-circle-fill" class="score-circle-fill" cx="80" cy="80" r="65" stroke-dashoffset="408"></circle>
+        </svg>
+        <span id="score-percentage-text" class="score-circle-text">--%</span>
+      </div>
+
+      <!-- Verdict Banner -->
+      <div id="result-verdict" class="result-verdict">
+        Evaluating score...
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9375rem;">Your assessment answers have been graded on the server.</p>
+
+      <!-- Statistical Metrics Row -->
+      <div class="results-stats-row">
+        <div class="result-stat-col">
+          <div id="stat-score" class="result-stat-val">-- / --</div>
+          <div class="result-stat-lbl">Final Score</div>
+        </div>
+        <div class="result-stat-col">
+          <div id="stat-correct" class="result-stat-val" style="color: var(--color-emerald-600);">--</div>
+          <div class="result-stat-lbl">Correct</div>
+        </div>
+        <div class="result-stat-col">
+          <div id="stat-incorrect" class="result-stat-val" style="color: var(--color-rose-600);">--</div>
+          <div class="result-stat-lbl">Incorrect</div>
+        </div>
+        <div class="result-stat-col">
+          <div id="stat-time" class="result-stat-val">--</div>
+          <div class="result-stat-lbl">Time Taken</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <a href="student-dashboard.html" class="btn btn-secondary">
+          ← Back to Dashboard
+        </a>
+        <a href="history.html" class="btn btn-secondary">
+          View Attempt History
+        </a>
+        <a id="btn-retake" href="#" class="btn btn-primary">
+          Retake Quiz
+        </a>
+      </div>
+    </div>
+
+    <!-- Question-by-Question Breakdown Review -->
+    <section id="review-section">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.25rem;">Detailed Question Review</h2>
+        <span class="badge badge-neutral">Correct Answers & Explanations</span>
+      </div>
+
+      <div id="review-questions-list">
+        <!-- Rendered dynamically by results.js -->
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/results.js"></script>
+</body>
+</html>

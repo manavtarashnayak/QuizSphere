@@ -25,9 +25,38 @@ backend/
   routes/          # Future API route modules
   services/        # Future business-logic modules
   tests/           # Future automated tests
+frontend/
+  index.html       # Landing page (hero, features, CSS mockup, workflow)
+  login.html       # Sign-in with role toggle and demo autofill
+  register.html    # Registration with password strength meter
+  student-dashboard.html    # Student stats, active quizzes, recent attempts
+  instructor-dashboard.html # Instructor dashboard, metrics, quiz management
+  quiz-list.html   # Assessment catalog with search and filters
+  take-quiz.html   # Distraction-free quiz engine, timer, and palette
+  create-quiz.html # Dynamic question builder with option configurator
+  results.html     # Score gauge, accuracy stats, and question review
+  history.html     # Attempt history table and status filters
+  css/             # Modern design system (navy/indigo/violet)
+  js/              # Reusable API client, auth, and page controllers
+  assets/          # Vector logos and icons
 requirements.txt
 .env.example
 ```
+
+## Running the Frontend
+
+The frontend is built using pure HTML5, CSS3, and vanilla JavaScript (no framework required). Run it using any static HTTP server:
+
+```powershell
+python -m http.server 5500 --directory frontend
+```
+
+Open your browser at `http://localhost:5500`.
+
+### Demo Credentials (Standalone Mode)
+If the backend is not yet running, the frontend automatically falls back to **Demo Mode**:
+- **Student**: `student@college.edu` (Password: `student123`)
+- **Instructor**: `instructor@college.edu` (Password: `instructor123`)
 
 ## Prerequisites
 
