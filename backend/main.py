@@ -1,4 +1,4 @@
-"""FastAPI application entry point connecting database, auth, and assessment routes."""
+"""FastAPI application entry point connecting database, auth, assessments, and analytics routes."""
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,12 +12,13 @@ from backend.services.auth import hash_password
 from backend.routes.auth import router as auth_router
 from backend.routes.quizzes import router as quizzes_router
 from backend.routes.attempts import router as attempts_router
+from backend.seed.cbse_questions import SEED_QUIZZES
 
 settings = get_settings()
 
 app = FastAPI(
     title="Quiz Assessment Platform API",
-    version="1.0.0",
+    version="1.1.0",
     description="Backend API for the Quiz Assessment Platform connecting PostgreSQL and HTML/JS frontend.",
 )
 
@@ -32,7 +33,7 @@ app.add_middleware(
 
 
 def init_db_and_seed_defaults():
-    """Create all tables and seed sample data if database is empty."""
+    """Create all tables and seed sample data and CBSE + Programming quizzes if not already present."""
     try:
         Base.metadata.create_all(bind=engine)
         db: Session = SessionLocal()
@@ -56,8 +57,8 @@ def init_db_and_seed_defaults():
                 db.add_all([student, instructor])
                 db.commit()
 
-            # Seed demo quizzes if empty
-            if not db.query(Quiz).first():
+            # Seed demo core quizzes if empty
+            if not db.query(Quiz).filter(Quiz.id == "q_1").first():
                 quiz1 = Quiz(
                     id="q_1",
                     instructor_id="u_instructor_1",
@@ -71,79 +72,77 @@ def init_db_and_seed_defaults():
                 db.add(quiz1)
                 db.commit()
 
-                q1 = Question(
-                    id="q1_1",
-                    quiz_id="q_1",
-                    question_text="What is the worst-case time complexity of QuickSort?",
-                    options=["O(n log n)", "O(n²)", "O(log n)", "O(n)"],
-                    correct_option=1,
-                    explanation="In the worst case when the pivot is always the extreme element, QuickSort degrades to O(n²).",
-                    order_index=1,
-                )
-                q2 = Question(
-                    id="q1_2",
-                    quiz_id="q_1",
-                    question_text="Which data structure follows the LIFO (Last In, First Out) principle?",
-                    options=["Queue", "Priority Queue", "Stack", "Binary Search Tree"],
-                    correct_option=2,
-                    explanation="A Stack follows the Last In First Out order for insertions and deletions.",
-                    order_index=2,
-                )
-                q3 = Question(
-                    id="q1_3",
-                    quiz_id="q_1",
-                    question_text="What is the average search complexity in a balanced Binary Search Tree?",
-                    options=["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-                    correct_option=1,
-                    explanation="In a balanced BST, tree height is log(n), making search operations O(log n).",
-                    order_index=3,
-                )
-                q4 = Question(
-                    id="q1_4",
-                    quiz_id="q_1",
-                    question_text="Which algorithm finds the shortest path in a graph with non-negative edge weights?",
-                    options=["Dijkstra's Algorithm", "Kruskal's Algorithm", "Prim's Algorithm", "DFS"],
-                    correct_option=0,
-                    explanation="Dijkstra's algorithm efficiently computes single-source shortest paths with non-negative weights.",
-                    order_index=4,
-                )
-                db.add_all([q1, q2, q3, q4])
-
-                # Second Quiz: Database Systems
-                quiz2 = Quiz(
-                    id="q_2",
-                    instructor_id="u_instructor_1",
-                    title="Database Management & SQL Systems",
-                    description="Assess understanding of relational database design, ACID properties, normalization, and SQL query optimizations.",
-                    category="Databases",
-                    difficulty="Advanced",
-                    duration_minutes=20,
-                    passing_score_percentage=70,
-                )
-                db.add(quiz2)
-                db.commit()
-
                 db.add_all([
                     Question(
-                        id="q2_1",
-                        quiz_id="q_2",
-                        question_text="Which normal form eliminates transitive functional dependencies?",
-                        options=["1NF", "2NF", "3NF", "BCNF"],
-                        correct_option=2,
-                        explanation="3NF requires no transitive functional dependencies of non-prime attributes on candidate keys.",
+                        id="q1_1",
+                        quiz_id="q_1",
+                        question_text="What is the worst-case time complexity of QuickSort?",
+                        options=["O(n log n)", "O(n²)", "O(log n)", "O(n)"],
+                        correct_option=1,
+                        explanation="In the worst case when the pivot is always the extreme element, QuickSort degrades to O(n²).",
                         order_index=1,
                     ),
                     Question(
-                        id="q2_2",
-                        quiz_id="q_2",
-                        question_text="In ACID properties, what does 'I' stand for?",
-                        options=["Integrity", "Iteration", "Isolation", "Indexing"],
+                        id="q1_2",
+                        quiz_id="q_1",
+                        question_text="Which data structure follows the LIFO (Last In, First Out) principle?",
+                        options=["Queue", "Priority Queue", "Stack", "Binary Search Tree"],
                         correct_option=2,
-                        explanation="Isolation ensures concurrent transactions execute without interfering with one another.",
+                        explanation="A Stack follows the Last In First Out order for insertions and deletions.",
                         order_index=2,
+                    ),
+                    Question(
+                        id="q1_3",
+                        quiz_id="q_1",
+                        question_text="What is the average search complexity in a balanced Binary Search Tree?",
+                        options=["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                        correct_option=1,
+                        explanation="In a balanced BST, tree height is log(n), making search operations O(log n).",
+                        order_index=3,
+                    ),
+                    Question(
+                        id="q1_4",
+                        quiz_id="q_1",
+                        question_text="Which algorithm finds the shortest path in a graph with non-negative edge weights?",
+                        options=["Dijkstra's Algorithm", "Kruskal's Algorithm", "Prim's Algorithm", "DFS"],
+                        correct_option=0,
+                        explanation="Dijkstra's algorithm efficiently computes single-source shortest paths with non-negative weights.",
+                        order_index=4,
                     ),
                 ])
                 db.commit()
+
+            # Seed CBSE 11th/12th and Basic Programming Quizzes
+            instructor_id = "u_instructor_1"
+            for q_data in SEED_QUIZZES:
+                existing_quiz = db.query(Quiz).filter(Quiz.id == q_data["id"]).first()
+                if not existing_quiz:
+                    new_quiz = Quiz(
+                        id=q_data["id"],
+                        instructor_id=instructor_id,
+                        title=q_data["title"],
+                        description=q_data["description"],
+                        category=q_data["category"],
+                        difficulty=q_data["difficulty"],
+                        duration_minutes=q_data["duration_minutes"],
+                        passing_score_percentage=q_data["passing_score_percentage"],
+                    )
+                    db.add(new_quiz)
+                    db.commit()
+
+                    for idx, question_item in enumerate(q_data["questions"], start=1):
+                        new_question = Question(
+                            id=question_item["id"],
+                            quiz_id=new_quiz.id,
+                            question_text=question_item["text"],
+                            options=question_item["options"],
+                            correct_option=question_item["correct_option"],
+                            explanation=question_item.get("explanation"),
+                            order_index=idx,
+                        )
+                        db.add(new_question)
+                    db.commit()
+
         finally:
             db.close()
     except Exception as e:
@@ -156,7 +155,7 @@ init_db_and_seed_defaults()
 # Register API Routers
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 app.include_router(quizzes_router, prefix="/api/quizzes", tags=["Quizzes"])
-app.include_router(attempts_router, prefix="/api", tags=["Attempts"])
+app.include_router(attempts_router, prefix="/api", tags=["Attempts & Analytics"])
 
 
 @app.get("/api/health", tags=["Health"])
