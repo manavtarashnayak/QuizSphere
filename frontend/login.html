@@ -1,143 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- 
-  ==========================================================================
-  🎓 TEAMMATE GUIDE - LOGIN PAGE (login.html)
-  ==========================================================================
-  This page handles user sign-in for both Students and Instructors.
-  Features:
-  - Role switcher toggle (Student vs Instructor)
-  - Password visibility show/hide eye toggle
-  - Quick autofill demo buttons ("Demo Student", "Demo Instructor")
-  - Connects to backend via /api/auth/login or runs in local Demo Mode
-  ==========================================================================
--->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In — Quiz Assessment Platform</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <title>Log in — QuizSphere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-glow" aria-hidden="true"></div>
 
-  <!-- Minimal Header -->
   <header class="site-header">
-    <div class="container navbar">
-      <a href="index.html" class="brand-logo">
-        <div class="brand-icon">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </div>
-        <span>QuizAssess</span>
-      </a>
-
-      <div class="nav-actions">
-        <div id="api-status-badge"></div>
-        <span style="font-size: 0.875rem; color: var(--text-muted);">Don't have an account?</span>
-        <a href="register.html" class="btn btn-secondary btn-sm">Register</a>
-      </div>
-    </div>
+    <nav class="container nav-bar" aria-label="Main">
+      <a class="logo" href="index.html"><span class="logo-cube" aria-hidden="true"></span><span>QuizSphere</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html" aria-current="page">Log in</a></li>
+        <li><a href="register.html" data-testid="nav-register">Register</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <!-- Login Main -->
-  <main class="auth-wrapper">
-    <div class="auth-card">
-      <div class="auth-header">
-        <div class="brand-icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </div>
-        <h1>Welcome Back</h1>
-        <p>Sign in to access your assessment dashboard</p>
-      </div>
-
-      <!-- Feedback Alert -->
-      <div id="auth-alert" class="auth-alert" role="alert"></div>
+  <main id="main" class="container auth-wrap">
+    <section class="glass tilt auth-card" aria-labelledby="login-title">
+      <span class="badge">Offline Demo Mode</span>
+      <h1 id="login-title" style="margin-top:.8rem">Welcome back</h1>
+      <p class="lead">Sign in to take or create quizzes.</p>
 
       <form id="login-form" novalidate>
-        <!-- Role Segmented Toggle -->
-        <div class="role-selector-wrap">
-          <span class="role-selector-label">I am signing in as</span>
-          <div class="role-selector">
-            <div class="role-option">
-              <input type="radio" name="role" id="role-student" value="student" checked>
-              <label for="role-student">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
-                </svg>
-                Student
-              </label>
-            </div>
-            <div class="role-option">
-              <input type="radio" name="role" id="role-instructor" value="instructor">
-              <label for="role-instructor">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1"/>
-                </svg>
-                Instructor
-              </label>
-            </div>
+        <fieldset>
+          <legend>I am a</legend>
+          <div class="role-toggle">
+            <input type="radio" id="role-student" name="role" value="student" checked>
+            <label for="role-student" data-testid="role-student">Student</label>
+            <input type="radio" id="role-instructor" name="role" value="instructor">
+            <label for="role-instructor" data-testid="role-instructor">Instructor</label>
           </div>
-        </div>
+        </fieldset>
 
-        <!-- Email Field -->
         <div class="form-group">
-          <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-          <input type="email" id="email" class="form-control" placeholder="name@college.edu" autocomplete="email" required>
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" autocomplete="email" placeholder="you@college.edu" required data-testid="login-email-input">
         </div>
-
-        <!-- Password Field -->
         <div class="form-group">
-          <label for="password" class="form-label">Password <span class="required">*</span></label>
-          <div class="password-input-group">
-            <input type="password" id="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
-            <button type="button" class="password-toggle-btn" data-target="password" aria-label="Show password">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-            </button>
-          </div>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Your password" required data-testid="login-password-input">
         </div>
 
-        <!-- Remember Me Checkbox -->
-        <div class="auth-actions-row">
-          <label class="checkbox-label">
-            <input type="checkbox" id="remember-me" checked>
-            <span>Remember this device</span>
-          </label>
-        </div>
+        <p id="form-error" class="form-error" role="alert" data-testid="login-error"></p>
 
-        <!-- Submit Button -->
-        <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%;">
-          Sign In
-        </button>
-
-        <!-- Instant Demo Fill Buttons -->
-        <div class="demo-accounts">
-          <div class="demo-title">Quick Demo Login (Click to Autofill)</div>
-          <div class="demo-buttons">
-            <button type="button" id="btn-demo-student" class="btn btn-secondary">
-              Demo Student
-            </button>
-            <button type="button" id="btn-demo-instructor" class="btn btn-secondary">
-              Demo Instructor
-            </button>
-          </div>
-        </div>
-
-        <div class="auth-footer">
-          Need an account? <a href="register.html">Create an account here</a>
-        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:1.5rem" data-testid="login-submit-btn">Sign in</button>
       </form>
-    </div>
+
+      <p class="divider">Or fill in a demo account</p>
+      <div class="demo-row">
+        <button type="button" class="btn btn-ghost" id="demo-student" data-testid="demo-student-btn">Demo Student</button>
+        <button type="button" class="btn btn-ghost" id="demo-instructor" data-testid="demo-instructor-btn">Demo Instructor</button>
+      </div>
+      <p class="divider">New here? <a href="register.html" data-testid="register-link">Create an account</a></p>
+    </section>
   </main>
 
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
+  <footer class="site-footer">
+    <div class="container">© 2026 QuizSphere · Offline Demo Mode</div>
+  </footer>
+
+  <script src="js/background.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/login.js"></script>
 </body>
 </html>
