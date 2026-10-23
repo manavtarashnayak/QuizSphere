@@ -12,13 +12,23 @@ const DEMO_QUIZZES = [
     theme: "gk",
     title: "General Knowledge",
     description: "Warm up with questions about the world around you.",
-    minutes: 10,
+    minutes: 15,
     questions: [
       { text: "What is the capital city of Japan?", options: ["Seoul", "Tokyo", "Beijing", "Bangkok"], answer: 1 },
       { text: "Which planet is known as the Red Planet?", options: ["Venus", "Jupiter", "Mars", "Saturn"], answer: 2 },
       { text: "How many continents are there on Earth?", options: ["5", "6", "7", "8"], answer: 2 },
       { text: "Which is the largest ocean?", options: ["Atlantic", "Indian", "Arctic", "Pacific"], answer: 3 },
-      { text: "Who painted the Mona Lisa?", options: ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh", "Claude Monet"], answer: 0 }
+      { text: "Who painted the Mona Lisa?", options: ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh", "Claude Monet"], answer: 0 },
+      { text: "Which is the longest river in the world?", options: ["Amazon", "Nile", "Yangtze", "Ganga"], answer: 1 },
+      { text: "What is the national animal of India?", options: ["Lion", "Elephant", "Bengal Tiger", "Peacock"], answer: 2 },
+      { text: "Which gas do plants absorb from the air?", options: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], answer: 2 },
+      { text: "How many days are there in a leap year?", options: ["365", "366", "364", "360"], answer: 1 },
+      { text: "Which is the smallest planet in our solar system?", options: ["Mercury", "Mars", "Venus", "Pluto"], answer: 0 },
+      { text: "Who wrote 'Romeo and Juliet'?", options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"], answer: 1 },
+      { text: "What is the hardest natural substance?", options: ["Gold", "Iron", "Diamond", "Quartz"], answer: 2 },
+      { text: "Which country is home to the kangaroo?", options: ["New Zealand", "South Africa", "Australia", "Brazil"], answer: 2 },
+      { text: "What is the boiling point of water at sea level?", options: ["90 °C", "100 °C", "110 °C", "120 °C"], answer: 1 },
+      { text: "Which is the tallest mountain in the world?", options: ["K2", "Kangchenjunga", "Mount Everest", "Lhotse"], answer: 2 }
     ]
   },
   {
@@ -26,13 +36,23 @@ const DEMO_QUIZZES = [
     theme: "math",
     title: "Basic Maths",
     description: "Quick arithmetic and number sense questions.",
-    minutes: 10,
+    minutes: 15,
     questions: [
       { text: "What is 12 × 8?", options: ["86", "96", "108", "92"], answer: 1 },
       { text: "What is 15% of 200?", options: ["15", "20", "30", "35"], answer: 2 },
       { text: "What is the square root of 144?", options: ["12", "14", "11", "16"], answer: 0 },
       { text: "Which number is a prime number?", options: ["21", "27", "29", "33"], answer: 2 },
-      { text: "What is 3/4 written as a decimal?", options: ["0.34", "0.75", "0.43", "0.70"], answer: 1 }
+      { text: "What is 3/4 written as a decimal?", options: ["0.34", "0.75", "0.43", "0.70"], answer: 1 },
+      { text: "What is 7 × 9?", options: ["56", "63", "72", "69"], answer: 1 },
+      { text: "What is 25% of 80?", options: ["20", "25", "16", "40"], answer: 0 },
+      { text: "What is 2 to the power of 5?", options: ["10", "25", "32", "64"], answer: 2 },
+      { text: "How many sides does a hexagon have?", options: ["5", "6", "7", "8"], answer: 1 },
+      { text: "What is 144 ÷ 12?", options: ["11", "12", "13", "14"], answer: 1 },
+      { text: "What is the sum of angles in a triangle?", options: ["90°", "180°", "270°", "360°"], answer: 1 },
+      { text: "What is 0.5 + 0.25?", options: ["0.55", "0.7", "0.75", "0.8"], answer: 2 },
+      { text: "What is the next prime number after 7?", options: ["9", "10", "11", "13"], answer: 2 },
+      { text: "What is the area of a square with side 6 cm?", options: ["24 cm²", "36 cm²", "12 cm²", "30 cm²"], answer: 1 },
+      { text: "What is 1000 − 357?", options: ["643", "653", "743", "657"], answer: 0 }
     ]
   },
   {
@@ -40,13 +60,23 @@ const DEMO_QUIZZES = [
     theme: "web",
     title: "Web Basics",
     description: "HTML, CSS and JavaScript fundamentals for beginners.",
-    minutes: 8,
+    minutes: 15,
     questions: [
       { text: "What does HTML stand for?", options: ["HyperText Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlink Text Mode Language"], answer: 0 },
       { text: "Which language is used to style web pages?", options: ["HTML", "Python", "CSS", "SQL"], answer: 2 },
       { text: "Which HTML tag makes a link?", options: ["<link>", "<a>", "<href>", "<url>"], answer: 1 },
       { text: "Which keyword declares a variable that cannot be reassigned in JavaScript?", options: ["var", "let", "const", "static"], answer: 2 },
-      { text: "Which CSS property changes text colour?", options: ["font-color", "text-color", "color", "foreground"], answer: 2 }
+      { text: "Which CSS property changes text colour?", options: ["font-color", "text-color", "color", "foreground"], answer: 2 },
+      { text: "Which HTML tag is used for the largest heading?", options: ["<head>", "<h6>", "<heading>", "<h1>"], answer: 3 },
+      { text: "Which HTML tag shows an image?", options: ["<img>", "<image>", "<pic>", "<src>"], answer: 0 },
+      { text: "How do you write a comment in JavaScript (single line)?", options: ["<!-- -->", "//", "#", "**"], answer: 1 },
+      { text: "Which CSS property sets the space inside an element's border?", options: ["margin", "spacing", "padding", "gap"], answer: 2 },
+      { text: "Which method prints a message to the browser console?", options: ["console.log()", "print()", "echo()", "alert.log()"], answer: 0 },
+      { text: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style System", "Colourful Style Sheets"], answer: 1 },
+      { text: "Which HTML element holds a numbered list?", options: ["<ul>", "<li>", "<ol>", "<list>"], answer: 2 },
+      { text: "Which operator checks equal value AND type in JavaScript?", options: ["=", "==", "===", "!="], answer: 2 },
+      { text: "Which CSS layout makes items sit in a flexible row or column?", options: ["float", "flexbox", "inline", "table"], answer: 1 },
+      { text: "Which attribute gives a link its destination?", options: ["src", "link", "href", "to"], answer: 2 }
     ]
   }
 ];
@@ -70,6 +100,44 @@ function themeOf(quiz) {
   return quiz.theme || { "gk-101": "gk", "math-101": "math", "web-101": "web" }[quiz.id] || "mix";
 }
 
+// ---- Test setup: subject + number of questions ----
+const SECONDS_PER_QUESTION = 60; // time allowed for a subject test, per question
+
+// Every question for one subject ("all" = every subject), gathered from all its quizzes
+function getQuestionPool(subject) {
+  const pool = [];
+  getQuizzes().forEach(function (quiz) {
+    if (subject === "all" || themeOf(quiz) === subject) {
+      quiz.questions.forEach(function (q) { pool.push(q); });
+    }
+  });
+  return pool;
+}
+
+// Subjects that actually have questions, with how many each has
+function getSubjectsWithCounts() {
+  const order = ["math", "gk", "web", "mix"];
+  return order.map(function (key) { return { key: key, name: TOPIC_NAMES[key], count: getQuestionPool(key).length }; })
+    .filter(function (s) { return s.count > 0; });
+}
+
+// Shuffle a copy of a list (Fisher–Yates)
+function shuffled(list) {
+  const copy = list.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+  }
+  return copy;
+}
+
+// Quick-pick sizes for the question-count picker, never more than what is available
+function countPresets(max) {
+  const presets = [5, 10, 15, 20, 25, 30].filter(function (n) { return n < max; });
+  presets.push(max);
+  return presets;
+}
+
 // Small helpers to read/write JSON in localStorage
 function load(key, fallback) {
   try {
@@ -81,7 +149,14 @@ function load(key, fallback) {
 }
 function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
-function getQuizzes() { return load("qs_quizzes", DEMO_QUIZZES); }
+// Built-in demo quizzes always use the latest question bank; instructor-made quizzes come from storage
+function getQuizzes() {
+  const saved = load("qs_quizzes", []);
+  const custom = saved.filter(function (q) {
+    return !DEMO_QUIZZES.some(function (d) { return d.id === q.id; });
+  });
+  return DEMO_QUIZZES.concat(custom);
+}
 function getQuiz(id) { return getQuizzes().find(function (q) { return q.id === id; }); }
 
 function getCurrentUser() {
@@ -143,7 +218,7 @@ function requireRole(role) {
 }
 
 function saveQuiz(quiz) {
-  const all = getQuizzes();
+  const all = load("qs_quizzes", []);
   all.push(quiz);
   save("qs_quizzes", all);
 }

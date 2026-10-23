@@ -1,14 +1,57 @@
-/* global requireUser, getQuiz, getParam, saveAttempt, themeOf */
+/* global requireUser, getQuiz, getParam, saveAttempt, themeOf, getQuestionPool, shuffled, TOPIC_NAMES, SECONDS_PER_QUESTION */
 // Take Quiz page logic
+// Two ways in:  take-quiz.html?id=<quiz>&count=<n>      → n questions from one quiz
+//               take-quiz.html?subject=<topic>&count=<n> → n random questions from a whole subject
 const student = requireUser();
-const quiz = getQuiz(getParam("id"));
+const quiz = buildTest();
 
 if (student && !quiz) window.location.href = "student-dashboard.html";
+
+function buildTest() {
+  const wanted = parseInt(getParam("count"), 10);
+  const subject = getParam("subject");
+  let base;
+  let pool;
+  if (subject) {
+    pool = getQuestionPool(subject);
+    if (pool.length === 0) return null;
+    base = {
+      id: "subject-" + subject,
+      theme: subject === "all" ? "mix" : subject,
+      title: (subject === "all" ? "All Subjects" : TOPIC_NAMES[subject] || "Mixed") + " Test",
+      secondsPerQuestion: SECONDS_PER_QUESTION
+    };
+  } else {
+    const source = getQuiz(getParam("id"));
+    if (!source) return null;
+    pool = source.questions;
+    base = {
+      id: source.id,
+      theme: themeOf(source),
+      title: source.title,
+      secondsPerQuestion: (source.minutes * 60) / source.questions.length
+    };
+  }
+  // No count (or a bad one) → use every question; otherwise clamp to what's available
+  const count = wanted > 0 ? Math.min(wanted, pool.length) : pool.length;
+  // Using every question of a single quiz keeps its original order; a smaller pick is random
+  const questions = (!subject && count === pool.length) ? pool.slice() : shuffled(pool).slice(0, count);
+  return {
+    id: base.id,
+    theme: base.theme,
+    title: base.title,
+    subject: subject,
+    requested: count,
+    seconds: Math.max(30, Math.round(base.secondsPerQuestion * count)),
+    questions: questions
+  };
+}
 
 if (student && quiz) {
   let current = 0;                                          // index of the question on screen
   const answers = new Array(quiz.questions.length).fill(null); // chosen option per question
-  let secondsLeft = quiz.minutes * 60;
+  const totalSeconds = quiz.seconds;
+  let secondsLeft = totalSeconds;
   let timerId = null;
 
   const optionsBox = document.getElementById("options");
@@ -80,7 +123,7 @@ if (student && quiz) {
     timer.classList.toggle("warning", secondsLeft <= 30);
 
     // Time bar shrinks with the time left and turns red near the end
-    const percentLeft = (secondsLeft / (quiz.minutes * 60)) * 100;
+    const percentLeft = (secondsLeft / totalSeconds) * 100;
     const bar = document.getElementById("time-bar");
     document.getElementById("time-bar-fill").style.width = percentLeft + "%";
     bar.setAttribute("aria-valuenow", Math.round(percentLeft));
@@ -115,6 +158,9 @@ if (student && quiz) {
       email: student.email,
       quizId: quiz.id,
       quizTitle: quiz.title,
+      theme: quiz.theme,
+      subject: quiz.subject || null,           // set for subject tests
+      questions: quiz.questions,               // the exact questions asked, so results can be reviewed
       answers: answers,
       correct: correct,
       total: quiz.questions.length,

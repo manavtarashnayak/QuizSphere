@@ -4,7 +4,11 @@ const viewer = requireUser();
 
 if (viewer) {
   const attempt = getAttempts(viewer.email).find(function (a) { return a.id === getParam("attempt"); });
-  const quiz = attempt && getQuiz(attempt.quizId);
+  // Newer attempts carry their own questions (custom subject / question-count tests)
+  const source = attempt && getQuiz(attempt.quizId);
+  const quiz = attempt && (attempt.questions
+    ? { id: attempt.quizId, title: attempt.quizTitle, theme: attempt.theme, questions: attempt.questions }
+    : source);
 
   if (!attempt || !quiz) {
     window.location.href = "student-dashboard.html";
@@ -18,7 +22,10 @@ if (viewer) {
     window.setBgTheme(themeOf(quiz));
     document.getElementById("result-summary").textContent =
       "You answered " + attempt.correct + " out of " + attempt.total + " questions correctly. Pass mark is " + PASS_MARK + "%.";
-    document.getElementById("retry-btn").href = "take-quiz.html?id=" + encodeURIComponent(quiz.id);
+    // "Try again" repeats the same setup: same subject or quiz, same number of questions
+    document.getElementById("retry-btn").href = attempt.subject
+      ? "take-quiz.html?subject=" + encodeURIComponent(attempt.subject) + "&count=" + attempt.total
+      : "take-quiz.html?id=" + encodeURIComponent(quiz.id) + "&count=" + attempt.total;
     document.getElementById("score-ring").setAttribute("aria-label", "Score " + attempt.percent + " percent");
 
     // Animate the ring: the circle outline is "dashed" and we slide the dash in

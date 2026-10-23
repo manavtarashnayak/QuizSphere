@@ -10,7 +10,7 @@ if (learner) {
   // Newest first, and remember each attempt's subject
   const attempts = getAttempts(learner.email).reverse().map(function (a) {
     const quiz = getQuiz(a.quizId);
-    return { data: a, topic: quiz ? themeOf(quiz) : "mix" };
+    return { data: a, topic: a.theme || (quiz ? themeOf(quiz) : "mix") };
   });
 
   function render(topic) {

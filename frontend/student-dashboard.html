@@ -56,8 +56,30 @@
       <div class="badge-grid" id="badge-grid" data-testid="badge-grid"></div>
     </section>
 
+    <section class="glass test-setup" aria-labelledby="setup-title" data-testid="test-setup">
+      <span class="eyebrow">Build your own test</span>
+      <h2 id="setup-title">Start a test</h2>
+      <p class="hint">Pick a subject and how many questions you want. Questions are shuffled each time.</p>
+
+      <div class="setup-step">
+        <h3 class="setup-label" id="subject-label"><span class="step-num" aria-hidden="true">1</span>Choose a subject</h3>
+        <div class="topic-chips" role="group" aria-labelledby="subject-label" id="subject-chips" data-testid="subject-chips"></div>
+      </div>
+
+      <div class="setup-step">
+        <h3 class="setup-label" id="count-label"><span class="step-num" aria-hidden="true">2</span>Number of questions</h3>
+        <div id="setup-count" data-testid="setup-count"></div>
+      </div>
+
+      <div class="setup-footer">
+        <p class="setup-summary" id="setup-summary" aria-live="polite" data-testid="setup-summary"></p>
+        <button type="button" class="btn btn-primary" id="start-test-btn" data-testid="start-test-btn">Start test</button>
+      </div>
+    </section>
+
     <section aria-labelledby="quiz-title">
       <h2 id="quiz-title">Available quizzes</h2>
+      <p class="hint" id="quiz-filter-note" data-testid="quiz-filter-note">Showing quizzes for the subject chosen above.</p>
       <div class="quiz-grid" id="quiz-grid" data-testid="quiz-grid"></div>
     </section>
 
@@ -67,6 +89,17 @@
       <ul class="attempt-list" id="attempt-list" data-testid="attempt-list"></ul>
     </section>
   </main>
+
+  <dialog id="count-dialog" aria-labelledby="count-dialog-title" data-testid="count-dialog">
+    <h2 id="count-dialog-title">How many questions?</h2>
+    <p id="count-dialog-text">Choose how many questions you want from this quiz.</p>
+    <div id="dialog-count" data-testid="dialog-count"></div>
+    <p class="setup-summary" id="dialog-summary" aria-live="polite" data-testid="dialog-summary"></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-ghost" id="count-cancel" data-testid="count-cancel-btn">Cancel</button>
+      <button type="button" class="btn btn-primary" id="count-start" data-testid="count-start-btn">Start quiz</button>
+    </div>
+  </dialog>
 
   <footer class="site-footer">
     <div class="container">© 2026 QuizSphere · Offline Demo Mode</div>

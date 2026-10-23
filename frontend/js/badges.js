@@ -2,6 +2,7 @@
 // Achievement badges: worked out from the student's saved attempts (nothing extra is stored)
 
 function topicOfAttempt(a) {
+  if (a.theme) return a.theme;
   const quiz = getQuiz(a.quizId);
   return quiz ? themeOf(quiz) : "mix";
 }
