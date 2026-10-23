@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Take Quiz — QuizSphere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body class="focus-mode">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="container nav-bar" aria-label="Main">
+      <a class="logo" href="student-dashboard.html"><span class="logo-cube" aria-hidden="true"></span><span>QuizSphere</span></a>
+      <ul class="nav-links">
+        <li><a href="student-dashboard.html" data-testid="exit-quiz-link">Exit quiz</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <div class="quiz-top">
+      <h1 id="quiz-name" style="font-size:clamp(1.3rem,3vw,1.9rem)" data-testid="quiz-title">Quiz</h1>
+      <div class="timer" id="timer" role="timer" aria-live="off" data-testid="quiz-timer">10:00</div>
+    </div>
+    <div class="bar-label"><span>Time left</span></div>
+    <div class="time-bar" id="time-bar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-testid="time-bar">
+      <div class="time-bar-fill" id="time-bar-fill"></div>
+    </div>
+    <div class="bar-label"><span>Answered</span></div>
+    <div class="progress" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+
+    <div class="quiz-layout">
+      <section class="glass question-card" aria-live="polite">
+        <span class="badge" id="q-counter" data-testid="question-counter">Question 1 of 5</span>
+        <h2 class="question-text" id="q-text" data-testid="question-text"></h2>
+        <div class="options" id="options" role="group" aria-labelledby="q-text"></div>
+        <div class="quiz-nav">
+          <button type="button" class="btn btn-ghost" id="prev-btn" data-testid="prev-btn">Previous</button>
+          <button type="button" class="btn btn-primary" id="next-btn" data-testid="next-btn">Next</button>
+        </div>
+      </section>
+
+      <aside class="glass palette-card" aria-labelledby="palette-title">
+        <h2 id="palette-title" style="font-size:1rem">Questions</h2>
+        <div class="palette" id="palette" data-testid="question-palette"></div>
+        <button type="button" class="btn btn-primary btn-block" id="submit-btn" data-testid="submit-quiz-btn">Submit quiz</button>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" data-testid="confirm-dialog">
+    <h2 id="confirm-title">Submit your quiz?</h2>
+    <p id="confirm-text">You cannot change your answers after submitting.</p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-ghost" id="cancel-submit" data-testid="cancel-submit-btn">Keep working</button>
+      <button type="button" class="btn btn-primary" id="confirm-submit" data-testid="confirm-submit-btn">Yes, submit</button>
+    </div>
+  </dialog>
+
+  <script src="js/background.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/quiz.js"></script>
+</body>
+</html>

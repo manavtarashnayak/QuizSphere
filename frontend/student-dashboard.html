@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — QuizSphere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="container nav-bar" aria-label="Main">
+      <a class="logo" href="index.html"><span class="logo-cube" aria-hidden="true"></span><span>QuizSphere</span></a>
+      <ul class="nav-links">
+        <li><a href="student-dashboard.html" aria-current="page">Dashboard</a></li>
+        <li><a href="history.html" data-testid="nav-history">History</a></li>
+        <li><a href="leaderboard.html" data-testid="nav-leaderboard">Leaderboard</a></li>
+        <li><a href="profile.html" data-testid="nav-profile">Profile</a></li>
+        <li><button type="button" id="logout-btn" data-testid="logout-btn">Log out</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <div class="dash-head reveal">
+      <div>
+        <span class="eyebrow">Student dashboard</span>
+        <h1 id="welcome" data-testid="welcome-heading">Welcome</h1>
+      </div>
+      <span class="badge">Offline Demo Mode</span>
+    </div>
+
+    <section class="stat-grid" aria-label="Your summary">
+      <article class="glass tilt stat-card">
+        <p class="stat-label">Quizzes available</p>
+        <p class="stat-value pop" id="stat-available" data-testid="stat-available">0</p>
+      </article>
+      <article class="glass tilt stat-card">
+        <p class="stat-label">Quizzes taken</p>
+        <p class="stat-value pop" id="stat-taken" data-testid="stat-taken">0</p>
+      </article>
+      <article class="glass tilt stat-card">
+        <p class="stat-label">Average score</p>
+        <p class="stat-value pop" id="stat-average" data-testid="stat-average">–</p>
+      </article>
+    </section>
+
+    <section aria-labelledby="badges-title" style="margin-bottom:3rem">
+      <h2 id="badges-title">Achievement badges</h2>
+      <p class="hint" id="badge-count" data-testid="badge-count">0 of 6 unlocked</p>
+      <div class="badge-grid" id="badge-grid" data-testid="badge-grid"></div>
+    </section>
+
+    <section aria-labelledby="quiz-title">
+      <h2 id="quiz-title">Available quizzes</h2>
+      <div class="quiz-grid" id="quiz-grid" data-testid="quiz-grid"></div>
+    </section>
+
+    <section aria-labelledby="attempts-title" style="margin-top:3rem">
+      <h2 id="attempts-title">Recent attempts</h2>
+      <a href="history.html" class="hint" data-testid="see-all-history-link">See all attempts in History →</a>
+      <ul class="attempt-list" id="attempt-list" data-testid="attempt-list"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© 2026 QuizSphere · Offline Demo Mode</div>
+  </footer>
+
+  <script src="js/background.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/badges.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
