@@ -1,4 +1,4 @@
-/* global requireRole, saveQuiz */
+/* global requireRole, saveQuiz, ApiClient */
 // Create Quiz page logic
 const author = requireRole("instructor");
 
@@ -60,7 +60,7 @@ if (author) {
   const topicSelect = document.getElementById("quiz-topic");
   topicSelect.addEventListener("change", function () { window.setBgTheme(topicSelect.value); });
 
-  document.getElementById("quiz-form").addEventListener("submit", function (event) {
+  document.getElementById("quiz-form").addEventListener("submit", async function (event) {
     event.preventDefault();
     errorBox.classList.remove("show");
 
@@ -73,6 +73,7 @@ if (author) {
 
     // Collect every question block into plain data
     const questions = [];
+    const backendQuestions = [];
     const blocks = list.querySelectorAll(".question-block");
     for (let b = 0; b < blocks.length; b++) {
       const block = blocks[b];
@@ -84,8 +85,10 @@ if (author) {
       }
       const answer = parseInt(block.querySelector('input[type="radio"]:checked').value, 10);
       questions.push({ text: text, options: options, answer: answer });
+      backendQuestions.push({ text: text, options: options, correct_option: answer });
     }
 
+    // Save to local browser storage so it is immediately visible in local list
     saveQuiz({
       id: "quiz-" + Date.now(),
       title: title,
@@ -94,6 +97,20 @@ if (author) {
       minutes: minutes,
       questions: questions
     });
+
+    // Also send to live PostgreSQL backend API if connected!
+    if (typeof ApiClient !== "undefined") {
+      await ApiClient.createQuiz({
+        title: title,
+        description: description || ("A quiz created by " + author.name + "."),
+        category: topicSelect.options[topicSelect.selectedIndex].text,
+        difficulty: "Intermediate",
+        duration_minutes: minutes,
+        passing_score_percentage: 50,
+        questions: backendQuestions
+      });
+    }
+
     window.location.href = "instructor-dashboard.html";
   });
 

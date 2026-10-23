@@ -70,13 +70,36 @@ const ApiClient = {
     }
   },
 
-  // Quizzes: Fetch all live published quizzes
+  // Quizzes: Fetch all live published quizzes from backend
   async getQuizzes() {
     try {
       const res = await fetch(`${API_BASE_URL}/quizzes`, { signal: AbortSignal.timeout(3000) });
       if (!res.ok) return null;
       return await res.json();
     } catch (e) {
+      return null;
+    }
+  },
+
+  // Quizzes: Create a new quiz in backend database
+  async createQuiz(payload) {
+    try {
+      const token = localStorage.getItem("qs_token");
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = "Bearer " + token;
+
+      const res = await fetch(`${API_BASE_URL}/quizzes`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || "Failed to create quiz on server");
+      }
+      return await res.json();
+    } catch (e) {
+      console.warn("Failed to create quiz on server:", e);
       return null;
     }
   },
@@ -95,7 +118,7 @@ const ApiClient = {
 
 // Auto update status badge on all pages
 document.addEventListener("DOMContentLoaded", async function () {
-  const badges = document.querySelectorAll(".badge, .site-footer .container");
+  const badges = document.querySelectorAll(".badge, .site-footer .container, #connection-status-badge");
   const isOnline = await ApiClient.checkConnection();
 
   badges.forEach(b => {

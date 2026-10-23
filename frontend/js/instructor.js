@@ -1,5 +1,5 @@
-/* global requireRole, getQuizzes, getAllAttempts, PASS_MARK, themeOf, TOPIC_NAMES */
-// Instructor dashboard logic
+/* global requireRole, getQuizzes, getAllAttempts, PASS_MARK, themeOf, TOPIC_NAMES, ApiClient */
+// Instructor dashboard logic with live backend sync
 const teacher = requireRole("instructor");
 
 // Turns a list of attempts into average score and pass rate
@@ -13,8 +13,32 @@ function summarise(list) {
   };
 }
 
-if (teacher) {
-  const quizzes = getQuizzes();
+async function loadInstructorData() {
+  if (!teacher) return;
+
+  let quizzes = getQuizzes();
+  
+  // Try fetching live quizzes from backend if connected
+  if (typeof ApiClient !== "undefined") {
+    const liveQuizzes = await ApiClient.getQuizzes();
+    if (liveQuizzes && liveQuizzes.length > 0) {
+      // Map backend quizzes to frontend format
+      const mappedLive = liveQuizzes.map(q => ({
+        id: q.id,
+        title: q.title,
+        description: q.description,
+        minutes: q.duration_minutes,
+        theme: "mix",
+        questions: new Array(q.question_count || 1)
+      }));
+      // Merge unique
+      const existingIds = new Set(quizzes.map(q => q.id));
+      mappedLive.forEach(mq => {
+        if (!existingIds.has(mq.id)) quizzes.push(mq);
+      });
+    }
+  }
+
   const attempts = getAllAttempts();
   const overall = summarise(attempts);
 
@@ -24,8 +48,9 @@ if (teacher) {
   document.getElementById("stat-average").textContent = overall.average;
   document.getElementById("stat-pass").textContent = overall.passRate;
 
-  // One table row per quiz
+  // Render rows
   const rows = document.getElementById("quiz-rows");
+  rows.innerHTML = "";
   quizzes.forEach(function (quiz) {
     const mine = attempts.filter(function (a) { return a.quizId === quiz.id; });
     const stats = summarise(mine);
@@ -34,7 +59,15 @@ if (teacher) {
     row.dataset.testid = "quiz-row-" + quiz.id;
     row.addEventListener("pointerenter", function () { window.setBgTheme(topic); });
     const labels = ["Quiz", "Subject", "Questions", "Time", "Attempts", "Average", "Pass rate"];
-    const cells = [quiz.title, TOPIC_NAMES[topic], quiz.questions.length, quiz.minutes + " min", mine.length, stats.average, stats.passRate];
+    const cells = [
+      quiz.title,
+      TOPIC_NAMES[topic] || "Mixed",
+      (quiz.questions ? quiz.questions.length : "–"),
+      (quiz.minutes || 15) + " min",
+      mine.length,
+      stats.average,
+      stats.passRate
+    ];
     cells.forEach(function (value, i) {
       const cell = document.createElement(i === 0 ? "th" : "td");
       if (i === 0) cell.scope = "row";
@@ -46,3 +79,5 @@ if (teacher) {
   });
   rows.addEventListener("pointerleave", function () { window.setBgTheme("mix"); });
 }
+
+loadInstructorData();
