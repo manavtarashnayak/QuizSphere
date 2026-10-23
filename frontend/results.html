@@ -3,102 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Assessment Results — Quiz Assessment Platform</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/quiz.css">
+  <title>Results — QuizSphere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
 </head>
-<body style="background-color: var(--bg-primary);">
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-glow" aria-hidden="true"></div>
 
-  <!-- Minimal Header -->
   <header class="site-header">
-    <div class="container navbar">
-      <a href="index.html" class="brand-logo">
-        <div class="brand-icon">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </div>
-        <span>QuizAssess</span>
-      </a>
-
-      <div class="nav-actions">
-        <div id="api-status-badge"></div>
-        <a href="student-dashboard.html" class="btn btn-secondary btn-sm">Dashboard</a>
-        <a href="history.html" class="btn btn-primary btn-sm">Attempt History</a>
-      </div>
-    </div>
+    <nav class="container nav-bar" aria-label="Main">
+      <a class="logo" href="index.html"><span class="logo-cube" aria-hidden="true"></span><span>QuizSphere</span></a>
+      <ul class="nav-links">
+        <li><a href="student-dashboard.html">Dashboard</a></li>
+        <li><a href="history.html" data-testid="nav-history">History</a></li>
+        <li><a href="leaderboard.html" data-testid="nav-leaderboard">Leaderboard</a></li>
+        <li><a href="profile.html" data-testid="nav-profile">Profile</a></li>
+        <li><button type="button" id="logout-btn" data-testid="logout-btn">Log out</button></li>
+      </ul>
+    </nav>
   </header>
 
-  <main id="results-main-content" class="results-container">
-    <!-- Hero Score Summary Card -->
-    <div class="results-hero-card">
-      <span class="badge badge-indigo" style="margin-bottom: 0.75rem;">Official Evaluation</span>
-      <h1 id="result-quiz-title" style="font-size: 1.75rem; margin-bottom: 1.5rem;">Assessment Results</h1>
-
-      <!-- Circular Progress Score Visualization -->
-      <div class="score-radial-wrap">
-        <svg class="score-radial-svg" viewBox="0 0 160 160">
-          <circle class="score-circle-bg" cx="80" cy="80" r="65"></circle>
-          <circle id="score-circle-fill" class="score-circle-fill" cx="80" cy="80" r="65" stroke-dashoffset="408"></circle>
+  <main id="main" class="container">
+    <section class="glass tilt result-hero reveal" aria-labelledby="result-title">
+      <div class="score-ring pop" role="img" id="score-ring" aria-label="Score">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+          <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52"></circle>
         </svg>
-        <span id="score-percentage-text" class="score-circle-text">--%</span>
+        <div class="ring-text" id="ring-text" data-testid="score-percent">0%</div>
       </div>
-
-      <!-- Verdict Banner -->
-      <div id="result-verdict" class="result-verdict">
-        Evaluating score...
-      </div>
-      <p style="color: var(--text-muted); font-size: 0.9375rem;">Your assessment answers have been graded on the server.</p>
-
-      <!-- Statistical Metrics Row -->
-      <div class="results-stats-row">
-        <div class="result-stat-col">
-          <div id="stat-score" class="result-stat-val">-- / --</div>
-          <div class="result-stat-lbl">Final Score</div>
-        </div>
-        <div class="result-stat-col">
-          <div id="stat-correct" class="result-stat-val" style="color: var(--color-emerald-600);">--</div>
-          <div class="result-stat-lbl">Correct</div>
-        </div>
-        <div class="result-stat-col">
-          <div id="stat-incorrect" class="result-stat-val" style="color: var(--color-rose-600);">--</div>
-          <div class="result-stat-lbl">Incorrect</div>
-        </div>
-        <div class="result-stat-col">
-          <div id="stat-time" class="result-stat-val">--</div>
-          <div class="result-stat-lbl">Time Taken</div>
+      <div>
+        <span class="pass-label" id="pass-label" data-testid="pass-label">Result</span>
+        <h1 id="result-title" style="font-size:clamp(1.6rem,4vw,2.4rem)" data-testid="result-quiz-title">Quiz</h1>
+        <p class="lead" id="result-summary" data-testid="result-summary"></p>
+        <div class="result-actions">
+          <a class="btn btn-primary" href="student-dashboard.html" data-testid="back-dashboard-btn">Back to dashboard</a>
+          <a class="btn btn-ghost" id="retry-btn" href="#" data-testid="retry-quiz-btn">Try again</a>
         </div>
       </div>
+    </section>
 
-      <!-- Actions -->
-      <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-        <a href="student-dashboard.html" class="btn btn-secondary">
-          ← Back to Dashboard
-        </a>
-        <a href="history.html" class="btn btn-secondary">
-          View Attempt History
-        </a>
-        <a id="btn-retake" href="#" class="btn btn-primary">
-          Retake Quiz
-        </a>
+    <section class="glass trophy-section" id="trophy-section" hidden aria-labelledby="trophy-title" data-testid="trophy-section">
+      <div class="trophy-scene" aria-hidden="true"><div class="trophy3d" id="trophy3d"></div></div>
+      <div>
+        <span class="eyebrow">Perfect score</span>
+        <h2 id="trophy-title">You earned the gold trophy!</h2>
+        <p class="lead" style="margin-top:.5rem">Every single answer was correct. Brilliant work.</p>
       </div>
-    </div>
+    </section>
 
-    <!-- Question-by-Question Breakdown Review -->
-    <section id="review-section">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-        <h2 style="font-size: 1.25rem;">Detailed Question Review</h2>
-        <span class="badge badge-neutral">Correct Answers & Explanations</span>
-      </div>
+    <section class="glass new-badges" id="new-badges" aria-labelledby="new-badges-title" data-testid="badge-showcase">
+      <span class="eyebrow" id="new-badges-eyebrow">Badge showcase</span>
+      <h2 id="new-badges-title" data-testid="badge-showcase-title">Your badges</h2>
+      <p class="hint" id="showcase-count" data-testid="showcase-count"></p>
+      <div class="badge-grid" id="new-badge-grid" data-testid="showcase-grid"></div>
+    </section>
 
-      <div id="review-questions-list">
-        <!-- Rendered dynamically by results.js -->
-      </div>
+    <section aria-labelledby="review-title" style="margin-top:3rem">
+      <h2 id="review-title">Review your answers</h2>
+      <ol class="review-list" id="review-list" data-testid="review-list"></ol>
     </section>
   </main>
 
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
+  <footer class="site-footer">
+    <div class="container">© 2026 QuizSphere · Offline Demo Mode</div>
+  </footer>
+
+  <script src="js/background.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/trophy.js"></script>
+  <script src="js/badges.js"></script>
   <script src="js/results.js"></script>
 </body>
 </html>
