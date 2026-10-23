@@ -26,7 +26,7 @@
 
   <main id="main" class="container auth-wrap">
     <section class="glass tilt auth-card" aria-labelledby="login-title">
-      <span class="badge">Offline Demo Mode</span>
+      <span class="badge" id="connection-status-badge">● Checking connection...</span>
       <h1 id="login-title" style="margin-top:.8rem">Welcome back</h1>
       <p class="lead">Sign in to take or create quizzes.</p>
 
@@ -65,11 +65,12 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">© 2026 QuizSphere · Offline Demo Mode</div>
+    <div class="container">© 2026 QuizSphere </div>
   </footer>
 
   <script src="js/background.js"></script>
   <script src="js/effects.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/data.js"></script>
   <script src="js/login.js"></script>
 </body>

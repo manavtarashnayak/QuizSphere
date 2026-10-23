@@ -32,7 +32,7 @@
         <span class="eyebrow">Student dashboard</span>
         <h1 id="welcome" data-testid="welcome-heading">Welcome</h1>
       </div>
-      <span class="badge">Offline Demo Mode</span>
+      <span class="badge" id="connection-status-badge">● Checking connection...</span>
     </div>
 
     <section class="stat-grid" aria-label="Your summary">
@@ -102,11 +102,12 @@
   </dialog>
 
   <footer class="site-footer">
-    <div class="container">© 2026 QuizSphere · Offline Demo Mode</div>
+    <div class="container">© 2026 QuizSphere </div>
   </footer>
 
   <script src="js/background.js"></script>
   <script src="js/effects.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/data.js"></script>
   <script src="js/badges.js"></script>
   <script src="js/dashboard.js"></script>

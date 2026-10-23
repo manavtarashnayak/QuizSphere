@@ -1,5 +1,5 @@
-/* global DEMO_USERS, login */
-// Login page logic
+/* global DEMO_USERS, login, ApiClient */
+// Login page logic connecting to FastAPI Backend with Local Fallback
 const form = document.getElementById("login-form");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
@@ -21,8 +21,8 @@ function fillDemo(role) {
 document.getElementById("demo-student").addEventListener("click", function () { fillDemo("student"); });
 document.getElementById("demo-instructor").addEventListener("click", function () { fillDemo("instructor"); });
 
-form.addEventListener("submit", function (event) {
-  event.preventDefault(); // stop the page from reloading
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
   const role = form.querySelector('input[name="role"]:checked').value;
 
   if (!emailInput.value || !passwordInput.value) {
@@ -30,7 +30,17 @@ form.addEventListener("submit", function (event) {
     return;
   }
 
-  const user = login(emailInput.value, passwordInput.value, role);
+  // 1. Try Live Backend API First
+  let user = null;
+  if (typeof ApiClient !== "undefined") {
+    user = await ApiClient.login(emailInput.value, passwordInput.value, role);
+  }
+
+  // 2. If backend is offline or returned error, fallback to offline local database
+  if (!user) {
+    user = login(emailInput.value, passwordInput.value, role);
+  }
+
   if (!user) {
     showError("Email, password or role is not correct. Try a demo account.");
     return;
