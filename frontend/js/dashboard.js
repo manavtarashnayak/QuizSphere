@@ -16,7 +16,15 @@ if (user) {
     document.getElementById("stat-average").textContent = Math.round(total / attempts.length) + "%";
   }
 
-  const SUBJECT_COLOURS = { math: "#fbbf24", gk: "#34d399", web: "#22d3ee", mix: "#93b4ff" };
+  const SUBJECT_COLOURS = {
+    phys: "#a855f7",
+    chem: "#ec4899",
+    math: "#fbbf24",
+    prog: "#3b82f6",
+    gk: "#34d399",
+    web: "#22d3ee",
+    mix: "#93b4ff"
+  };
 
   // Reusable "how many questions" picker: quick-pick chips + a − / number / + stepper
   function makeCountPicker(box, prefix, onChange) {
