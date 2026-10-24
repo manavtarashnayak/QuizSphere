@@ -17,18 +17,17 @@ def build(app, page):
 
     is_online = api.is_backend_online()
 
-    # Load quizzes: merge local quizzes and backend quizzes
-    quizzes_map = {q["id"]: q for q in data.get_quizzes()}
+    # When online, use live PostgreSQL quizzes
     if is_online:
         live_quizzes = api.fetch_quizzes()
         if live_quizzes:
+            quizzes = []
             for lq in live_quizzes:
                 qid = lq["id"]
-                q_count = lq.get("question_count", 0)
-                local_q = quizzes_map.get(qid, {})
+                local_q = data.get_quiz(qid) or {}
+                q_count = lq.get("question_count", len(local_q.get("questions", [])))
                 local_questions = local_q.get("questions", [])
                 if len(local_questions) < q_count:
-                    # Provide placeholder question items so question count is correct
                     placeholder_questions = local_questions + [
                         {"id": f"{qid}_q{k+1}", "text": f"Question {k+1}", "options": ["A", "B", "C", "D"], "answer": 0}
                         for k in range(len(local_questions), q_count)
@@ -36,17 +35,20 @@ def build(app, page):
                 else:
                     placeholder_questions = local_questions
 
-                quizzes_map[qid] = {
+                quizzes.append({
                     "id": qid,
                     "title": lq["title"],
-                    "description": lq.get("description", ""),
+                    "description": lq.get("description") or local_q.get("description", ""),
                     "theme": data.theme_of(lq),
                     "category": lq.get("category", "General"),
                     "minutes": lq.get("duration_minutes", 10),
                     "questions": placeholder_questions,
                     "live": True,
-                }
-    quizzes = list(quizzes_map.values())
+                })
+        else:
+            quizzes = data.get_quizzes()
+    else:
+        quizzes = data.get_quizzes()
 
     # Sync attempts if backend is online
     if is_online:

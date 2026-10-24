@@ -78,7 +78,7 @@ DEMO_QUIZZES = [
         ],
     },
     {
-        "id": "cbse-cs-py-11-12",
+        "id": "cbse-cs-prog-11-12",
         "theme": "prog",
         "category": "Computer Science",
         "title": "Computer Science & Python",
@@ -174,6 +174,7 @@ def theme_of(quiz):
         "cbse-phys-11-12": "phys",
         "cbse-chem-11-12": "chem",
         "cbse-math-11-12": "math",
+        "cbse-cs-prog-11-12": "prog",
         "cbse-cs-py-11-12": "prog",
         "gk-101": "gk",
         "math-101": "math",
@@ -219,7 +220,6 @@ def get_quiz(quiz_id):
 
 def save_quiz(quiz):
     all_quizzes = get_quizzes()
-    # Replace if exists or append
     idx = next((i for i, q in enumerate(all_quizzes) if q["id"] == quiz["id"]), -1)
     if idx >= 0:
         all_quizzes[idx] = quiz
@@ -305,7 +305,6 @@ def get_attempts(email):
 
 def save_attempt(attempt):
     all_attempts = get_all_attempts()
-    # Replace existing by id or append
     idx = next((i for i, a in enumerate(all_attempts) if a["id"] == attempt["id"]), -1)
     if idx >= 0:
         all_attempts[idx] = attempt
