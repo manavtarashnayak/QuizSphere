@@ -28,7 +28,21 @@ SUCCESS = "#34d399"
 DANGER = "#f87171"
 
 # Each subject has its own colour (like the website's 3D background themes)
-TOPIC_COLORS = {"math": "#fbbf24", "gk": "#34d399", "web": "#22d3ee", "mix": "#93b4ff"}
+class SafeColorDict(dict):
+    def __getitem__(self, key):
+        return self.get(key, "#93b4ff")
+
+TOPIC_COLORS = SafeColorDict({
+    "math": "#fbbf24",   # Gold
+    "gk": "#34d399",     # Emerald
+    "web": "#22d3ee",    # Cyan
+    "mix": "#93b4ff",    # Indigo
+    "phys": "#a78bfa",   # Purple
+    "chem": "#f472b6",   # Pink
+    "prog": "#38bdf8",   # Sky blue
+    "dsa": "#4ade80",    # Light Green
+    "sql": "#facc15",    # Amber
+})
 
 # 2. Fonts: pick the first family installed on this computer
 FAMILY = "Helvetica"

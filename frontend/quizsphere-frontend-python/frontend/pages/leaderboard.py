@@ -3,6 +3,7 @@ ranked by average score, with a gold / silver / bronze podium."""
 
 import tkinter as tk
 
+import api
 import data
 import theme
 
@@ -10,7 +11,42 @@ MEDALS = {1: ("#fbbf24", "#b45309"), 2: ("#e5e7eb", "#6b7280"), 3: ("#f59e0b", "
 
 
 def ranking_for(me):
-    # 1. Group real attempts by student email
+    is_online = api.is_backend_online()
+    if is_online:
+        live_data = api.fetch_leaderboard()
+        if live_data:
+            people = []
+            seen_names = set()
+            for entry in live_data:
+                name = entry.get("student_name", "Student")
+                seen_names.add(name)
+                avg = round(float(entry.get("average_score", 0)))
+                quizzes = entry.get("quizzes_taken", 0)
+                is_me = bool(me and (entry.get("user_id") == me.get("id") or name == me.get("name")))
+                people.append({
+                    "name": name,
+                    "average": avg,
+                    "quizzes": quizzes,
+                    "isMe": is_me,
+                    "sample": False
+                })
+
+            # If current logged in student has 0 server attempts yet, include them
+            if me and me["role"] == "student" and me["name"] not in seen_names:
+                people.append({"name": me["name"], "average": 0, "quizzes": 0, "isMe": True, "sample": False})
+
+            # If podium needs more entries, pad with sample classmates
+            if len(people) < 3:
+                for c in data.SAMPLE_CLASSMATES:
+                    if c["name"] not in seen_names:
+                        people.append(dict(c, sample=True, isMe=False))
+                        if len(people) >= 3:
+                            break
+
+            people.sort(key=lambda p: (-p["average"], -p["quizzes"]))
+            return people
+
+    # Fallback to local data
     by_email = {}
     for a in data.get_all_attempts():
         by_email.setdefault(a["email"], []).append(a["percent"])
@@ -18,15 +54,17 @@ def ranking_for(me):
     people = []
     for email, scores in by_email.items():
         account = next((u for u in users if u["email"] == email), None)
-        people.append({"name": account["name"] if account else email,
-                       "average": data.js_round(sum(scores) / len(scores)),
-                       "quizzes": len(scores), "isMe": email == me["email"]})
-    # A student with no attempts yet still appears (0%), so they can see where they start
-    if me["role"] == "student" and me["email"] not in by_email:
-        people.append({"name": me["name"], "average": 0, "quizzes": 0, "isMe": True})
+        people.append({
+            "name": account["name"] if account else email,
+            "average": data.js_round(sum(scores) / len(scores)),
+            "quizzes": len(scores),
+            "isMe": bool(me and email == me["email"]),
+            "sample": False
+        })
+    if me and me["role"] == "student" and me["email"] not in by_email:
+        people.append({"name": me["name"], "average": 0, "quizzes": 0, "isMe": True, "sample": False})
 
-    # 2. Mix in sample classmates; highest average first, then most quizzes
-    people += [dict(c, sample=True) for c in data.SAMPLE_CLASSMATES]
+    people += [dict(c, sample=True, isMe=False) for c in data.SAMPLE_CLASSMATES]
     people.sort(key=lambda p: (-p["average"], -p["quizzes"]))
     return people
 
@@ -39,11 +77,20 @@ def build(app, page):
     body = page.body
     me = data.get_current_user()
     ranking = ranking_for(me)
+    is_online = api.is_backend_online()
 
-    theme.eyebrow(body, "Class rankings").pack(fill="x", pady=(30, 0))
-    theme.heading(body, "Leaderboard", size=28).pack(fill="x")
-    theme.text(body, 'Ranked by average score. Names marked "sample" are demo classmates.',
-               fg=theme.MUTED).pack(fill="x")
+    head = tk.Frame(body, bg=theme.BG)
+    head.pack(fill="x", pady=(30, 0))
+    left = tk.Frame(head, bg=theme.BG)
+    left.pack(side="left", fill="x", expand=True)
+
+    theme.eyebrow(left, "Class rankings").pack(fill="x")
+    theme.heading(left, "Leaderboard", size=28).pack(fill="x")
+    theme.text(left, 'Ranked by average percentage score from PostgreSQL database.', fg=theme.MUTED).pack(fill="x")
+
+    badge_text = "● Live Server" if is_online else "○ Offline Mode"
+    badge_color = theme.SUCCESS if is_online else theme.MUTED
+    theme.pill(head, badge_text, color=badge_color, bg=theme.CARD).pack(side="right")
 
     # ---- Podium: 2nd, 1st, 3rd so the winner stands in the middle
     theme.heading(body, "Top three students", size=16).pack(fill="x", pady=(26, 6))
@@ -98,4 +145,3 @@ def build(app, page):
         meter.pack(fill="x", pady=(6, 0))
         meter.bind("<Configure>", lambda e, m=meter, pct=p["average"]: (
             m.delete("all"), m.create_rectangle(0, 0, e.width * pct / 100, 6, fill=theme.GOLD, outline="")))
-    tk.Frame(body, bg=theme.BG, height=30).pack()

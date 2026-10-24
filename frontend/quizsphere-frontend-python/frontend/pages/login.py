@@ -4,6 +4,7 @@ import tkinter as tk
 
 import data
 import theme
+import api
 
 
 def role_toggle(parent, var, bg=theme.CARD):
@@ -37,7 +38,8 @@ def build(app, page):
     box.pack()
     bg = theme.CARD
 
-    theme.pill(box, "Offline Demo Mode", bg=bg).pack(anchor="w")
+    status_text = "Live Server Connected" if api.is_backend_online() else "Offline Demo Mode"
+    theme.pill(box, status_text, bg=bg).pack(anchor="w")
     theme.heading(box, "Welcome back", size=24, bg=bg).pack(fill="x", pady=(12, 0))
     theme.text(box, "Sign in to take or create quizzes.", bg=bg, size=12).pack(fill="x")
 
@@ -54,7 +56,15 @@ def build(app, page):
         if not e or not p:
             error.show("Please enter your email and password.")
             return
-        user = data.login(e, p, role.get())
+
+        # 1. Try Live FastAPI Backend First
+        user = api.login(e, p, role.get())
+        if user:
+            data.set_current_user(user)
+        else:
+            # 2. Fallback to Local Data
+            user = data.login(e, p, role.get())
+
         if not user:
             error.show("Email, password or role is not correct. Try a demo account.")
             return
