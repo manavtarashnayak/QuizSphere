@@ -7,9 +7,19 @@ A modern, responsive full-stack assessment platform designed for conducting time
 ## 👥 Authors & Team Contributions
 
 - **Frontend Developer**: **Sumedha Sil** (*SRM KTR · CSE Core · RA2611003011378*)
-  - Python Tkinter desktop GUI, interactive card hover effects, custom 3D canvas animations, theme palette system, question palette navigation, achievement badges showcase, and interactive podium leaderboard.
+  - Desktop GUI frontend, dark glassmorphism styling, interactive hover effects, procedural background & vine canvas animations, question palette navigation, achievement badges showcase, and interactive podium leaderboard.
 - **Backend Developer**: **Manav Tarash Nayak**
   - FastAPI consolidated REST API endpoints, PostgreSQL schema design and SQLAlchemy ORM models, Argon2 password hashing, PyJWT bearer token authentication, authoritative server-side exam grading, timer validation, and CBSE question bank seeding.
+
+---
+
+## 📸 Platform Screenshots
+
+### 🖥️ Student Dashboard & Assessment Catalog
+![Student Dashboard](docs/screenshots/student_dashboard.png)
+
+### 📊 Performance Analytics, Curriculum & Achievements
+![Assessment Platform Overview](docs/screenshots/assessment_platform.png)
 
 ---
 
@@ -197,6 +207,11 @@ quiz-assessment-platform/
 │               ├── create_quiz.py  # Multi-question creator with options and explanations
 │               ├── profile.py      # Student/Instructor profile and display name editor
 │               └── common.py       # Reusable UI widgets (stat cards, badges, topic tags)
+│
+├── docs/
+│   └── screenshots/                # UI screenshots for README
+│       ├── student_dashboard.png
+│       └── assessment_platform.png
 │
 ├── .env.example                    # Template environment variables
 ├── requirements.txt                # Python backend dependencies
