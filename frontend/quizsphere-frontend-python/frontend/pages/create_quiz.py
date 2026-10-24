@@ -4,14 +4,23 @@ import tkinter as tk
 
 import data
 import theme
+import api
 
 LETTERS = ["A", "B", "C", "D"]
-SUBJECTS = [("math", "Maths"), ("gk", "General Knowledge"), ("web", "Web & Code"), ("mix", "Mixed")]
+SUBJECTS = [
+    ("math", "Maths"),
+    ("phys", "Physics"),
+    ("chem", "Chemistry"),
+    ("prog", "Programming"),
+    ("gk", "General Knowledge"),
+    ("web", "Web & Code"),
+    ("mix", "Mixed")
+]
 
 
 def build(app, page):
     body = page.body
-    author = data.get_current_user()
+    author = data.get_current_user() or {"name": "Instructor"}
     bg = theme.CARD
 
     theme.eyebrow(body, "Instructor").pack(fill="x", pady=(30, 0))
@@ -54,29 +63,31 @@ def build(app, page):
     # ---- Question blocks
     question_list = tk.Frame(body, bg=theme.BG)
     question_list.pack(fill="x", pady=(10, 0))
-    blocks = []   # each block = {"frame", "legend", "text", "options", "correct"}
+    blocks = []
     error = theme.message(body, bg=theme.BG)
 
     def renumber():
-        for i, b in enumerate(blocks):
-            b["legend"].config(text=f"Question {i + 1}")
+        for i, b in enumerate(blocks, start=1):
+            b["legend"].config(text=f"Question {i}")
 
     def add_question():
-        frame = theme.card(question_list, padx=26, pady=18)
-        frame.pack(fill="x", pady=(12, 0))
-        legend = theme.heading(frame, "", size=15, bg=bg)
-        legend.pack(fill="x")
-        text_box = theme.field(frame, "Question text")
-        theme.text(frame, "Type the 4 answer choices and select the correct one.", size=9, bg=bg,
-                   fg=theme.MUTED).pack(fill="x", pady=(10, 4))
+        frame = theme.card(question_list, padx=22, pady=18)
+        frame.pack(fill="x", pady=10)
+        top = tk.Frame(frame, bg=bg)
+        top.pack(fill="x")
+        legend = tk.Label(top, text="Question", font=theme.font(13, "bold"), bg=bg, fg=theme.WHITE)
+        legend.pack(side="left")
+        text_box = theme.field(frame, "Question text", placeholder="Type the question here")
+
+        tk.Label(frame, text="Answer choices (pick the correct one)", font=theme.font(10, "bold"),
+                 bg=bg, fg=theme.WHITE, anchor="w").pack(fill="x", pady=(12, 6))
         correct = tk.IntVar(value=0)
         options = []
-        for i, letter in enumerate(LETTERS):
+        for idx, letter in enumerate(LETTERS):
             line = tk.Frame(frame, bg=bg)
-            line.pack(fill="x", pady=3)
-            tk.Radiobutton(line, variable=correct, value=i, bg=bg, activebackground=bg,
-                           selectcolor=theme.INPUT, fg=theme.GOLD, highlightthickness=0,
-                           cursor="hand2").pack(side="left")
+            line.pack(fill="x", pady=2)
+            tk.Radiobutton(line, variable=correct, value=idx, bg=bg, activebackground=bg,
+                           highlightthickness=0).pack(side="left", padx=(0, 6))
             tk.Label(line, text=letter, font=theme.font(11, "bold"), width=3, bg=theme.BORDER,
                      fg=theme.WHITE, pady=4).pack(side="left", padx=(2, 8))
             box = theme.entry(line, placeholder=f"Option {letter}")
@@ -120,14 +131,26 @@ def build(app, page):
                 return
             questions.append({"text": q_text, "options": opts, "answer": b["correct"].get()})
         topic = next(key for key, name in SUBJECTS if name == subject.get())
+
+        # 1. Save to local storage for instant offline availability
         data.save_quiz({
             "id": "quiz-" + data.new_id(),
             "title": quiz_title,
             "theme": topic,
-            "description": description or f"A quiz created by {author['name']}.",
+            "description": description or f"A quiz created by {author.get('name', 'Instructor')}.",
             "minutes": mins,
             "questions": questions,
         })
+
+        # 2. Also send to live PostgreSQL backend API!
+        api.create_quiz(
+            title=quiz_title,
+            description=description or f"A quiz created by {author.get('name', 'Instructor')}.",
+            category=subject.get(),
+            minutes=mins,
+            questions=questions
+        )
+
         app.show("instructor-dashboard")
 
     actions = tk.Frame(body, bg=theme.BG)
@@ -136,4 +159,4 @@ def build(app, page):
     theme.Button(actions, "Save quiz", save).pack(side="right")
     error.pack(fill="x", pady=(10, 30))
 
-    add_question()   # start with one empty question
+    add_question()

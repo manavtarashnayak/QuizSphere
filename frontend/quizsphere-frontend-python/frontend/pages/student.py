@@ -2,6 +2,7 @@
 
 import tkinter as tk
 
+import api
 import data
 import theme
 from pages.common import badge_grid, card_hover, section, stat_card, topic_tag
@@ -10,7 +11,62 @@ from pages.common import badge_grid, card_hover, section, stat_card, topic_tag
 def build(app, page):
     body = page.body
     user = data.get_current_user()
-    quizzes = data.get_quizzes()
+    if not user:
+        page.after(1, lambda: app.show("login"))
+        return
+
+    is_online = api.is_backend_online()
+
+    # Load quizzes: merge local quizzes and backend quizzes
+    quizzes_map = {q["id"]: q for q in data.get_quizzes()}
+    if is_online:
+        live_quizzes = api.fetch_quizzes()
+        if live_quizzes:
+            for lq in live_quizzes:
+                qid = lq["id"]
+                q_count = lq.get("question_count", 0)
+                local_q = quizzes_map.get(qid, {})
+                local_questions = local_q.get("questions", [])
+                if len(local_questions) < q_count:
+                    # Provide placeholder question items so question count is correct
+                    placeholder_questions = local_questions + [
+                        {"id": f"{qid}_q{k+1}", "text": f"Question {k+1}", "options": ["A", "B", "C", "D"], "answer": 0}
+                        for k in range(len(local_questions), q_count)
+                    ]
+                else:
+                    placeholder_questions = local_questions
+
+                quizzes_map[qid] = {
+                    "id": qid,
+                    "title": lq["title"],
+                    "description": lq.get("description", ""),
+                    "theme": data.theme_of(lq),
+                    "category": lq.get("category", "General"),
+                    "minutes": lq.get("duration_minutes", 10),
+                    "questions": placeholder_questions,
+                    "live": True,
+                }
+    quizzes = list(quizzes_map.values())
+
+    # Sync attempts if backend is online
+    if is_online:
+        server_history = api.fetch_attempt_history()
+        if server_history:
+            local_attempt_ids = {a["id"] for a in data.get_all_attempts()}
+            for sa in server_history:
+                if sa["id"] not in local_attempt_ids:
+                    data.save_attempt({
+                        "id": sa["id"],
+                        "email": user["email"],
+                        "quizId": sa["quiz_id"],
+                        "quizTitle": sa["quiz_title"],
+                        "correct": sa["score"],
+                        "total": sa["total_questions"],
+                        "percent": sa["percentage"],
+                        "date": sa["completed_at"],
+                        "review": sa.get("detailed_review", []),
+                    })
+
     attempts = data.get_attempts(user["email"])
 
     head = tk.Frame(body, bg=theme.BG)
@@ -19,7 +75,10 @@ def build(app, page):
     left.pack(side="left", fill="x", expand=True)
     theme.eyebrow(left, "Student dashboard").pack(fill="x")
     theme.heading(left, f"Welcome, {user['name']}", size=28).pack(fill="x")
-    theme.pill(head, "Offline Demo Mode").pack(side="right")
+
+    badge_text = "● Live Server Connected" if is_online else "○ Offline Demo Mode"
+    badge_color = theme.SUCCESS if is_online else theme.MUTED
+    theme.pill(head, badge_text, color=badge_color, bg=theme.CARD).pack(side="right")
 
     # Summary cards
     stats = tk.Frame(body, bg=theme.BG)
@@ -49,12 +108,14 @@ def build(app, page):
         topic_tag(box, topic).pack(anchor="w")
         title = theme.heading(box, quiz["title"], size=15, bg=theme.CARD)
         title.pack(fill="x", pady=(12, 4))
-        desc = theme.text(box, quiz["description"], size=10, bg=theme.CARD, wrap=280)
+        desc = theme.text(box, quiz.get("description", ""), size=10, bg=theme.CARD, wrap=280)
         desc.pack(fill="x")
         meta = tk.Frame(box, bg=theme.CARD)
         meta.pack(fill="x", pady=(12, 14))
         theme.pill(meta, f"{len(quiz['questions'])} questions", bg=theme.CARD).pack(side="left")
         theme.pill(meta, f"{quiz['minutes']} min", bg=theme.CARD).pack(side="left", padx=6)
+        if quiz.get("live"):
+            theme.pill(meta, "Live DB", color=theme.GOLD, bg=theme.CARD).pack(side="left", padx=6)
         theme.Button(box, "Start quiz", lambda q=quiz: app.show("take-quiz", quiz_id=q["id"])).pack(anchor="w", side="bottom")
         card_hover(box, theme.TOPIC_COLORS[topic], (title, desc, meta),
                    on_enter=lambda t=topic: page.background.set_theme(t),

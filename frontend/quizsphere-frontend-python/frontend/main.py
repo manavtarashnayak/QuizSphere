@@ -18,6 +18,7 @@ import math
 import tkinter as tk
 from tkinter import messagebox
 
+import api
 import data
 import theme
 from background import Background
@@ -116,7 +117,8 @@ class App:
         foot.pack(side="bottom", fill="x")
         tk.Label(foot, text="Front-end developer:  Sumedha Sil  ·  SRM KTR  ·  CSE Core  ·  RA2611003011378",
                  font=theme.font(10, "bold"), bg=theme.BG_2, fg=theme.GOLD).pack()
-        tk.Label(foot, text="© 2026 QuizSphere · Offline Demo Mode", font=theme.font(9),
+        status_text = "Live Server API Connected" if api.is_backend_online() else "Offline Demo Mode"
+        tk.Label(foot, text=f"© 2026 QuizSphere · {status_text}", font=theme.font(9),
                  bg=theme.BG_2, fg=theme.MUTED).pack()
 
     def _navbar(self, current, user):

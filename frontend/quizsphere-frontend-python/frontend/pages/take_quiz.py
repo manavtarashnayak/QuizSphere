@@ -3,7 +3,9 @@ question palette and a Submit button."""
 
 import tkinter as tk
 from tkinter import messagebox
+import uuid
 
+import api
 import data
 import theme
 
@@ -12,16 +14,68 @@ LETTERS = ["A", "B", "C", "D"]
 
 def build(app, page, quiz_id=None):
     student = data.get_current_user()
+    if not student:
+        page.after(1, lambda: app.show("login"))
+        return
+
+    is_online = api.is_backend_online()
+
     quiz = data.get_quiz(quiz_id)
+    attempt_id = None
+
+    # If quiz is not in local data, fetch metadata from backend
+    if not quiz and is_online:
+        live_quizzes = api.fetch_quizzes()
+        if live_quizzes:
+            match = next((q for q in live_quizzes if q["id"] == quiz_id), None)
+            if match:
+                quiz = {
+                    "id": match["id"],
+                    "title": match["title"],
+                    "description": match.get("description", ""),
+                    "theme": data.theme_of(match),
+                    "minutes": match.get("duration_minutes", 10),
+                    "questions": [],
+                }
+
     if not quiz:
         page.after(1, lambda: app.show("student-dashboard"))
         return
 
-    questions = quiz["questions"]
-    total_seconds = quiz["minutes"] * 60
+    # Fetch live questions from backend if available
+    questions = list(quiz.get("questions", []))
+    if is_online:
+        session = api.start_quiz(quiz["id"])
+        if session and session.get("attempt_id"):
+            attempt_id = session["attempt_id"]
+
+        live_qs = api.fetch_quiz_questions(quiz["id"])
+        if live_qs and len(live_qs) > 0:
+            # Map backend questions into quiz format
+            questions = [
+                {
+                    "id": q["id"],
+                    "text": q["text"],
+                    "options": q["options"],
+                    "answer": q.get("correct_option", 0),  # Backend sanitized questions omit correct_option
+                }
+                for q in live_qs
+            ]
+
+    # Ensure every question has an id
+    for idx, q in enumerate(questions):
+        if "id" not in q:
+            q["id"] = f"{quiz['id']}_q{idx+1}"
+
+    if not questions:
+        messagebox.showinfo("Quiz empty", "This quiz currently has no questions.")
+        page.after(1, lambda: app.show("student-dashboard"))
+        return
+
+    total_seconds = quiz.get("minutes", 10) * 60
     state = {"current": 0, "answers": [None] * len(questions), "left": total_seconds, "finished": False}
     color = theme.TOPIC_COLORS[data.theme_of(quiz)]
-    page.background.set_theme(data.theme_of(quiz))   # background shows this subject's shapes
+    page.background.set_theme(data.theme_of(quiz))
     body = page.body
 
     # ---- Top: quiz name, timer and bars
@@ -89,7 +143,8 @@ def build(app, page, quiz_id=None):
                            highlightthickness=2 if chosen else 1,
                            highlightbackground=theme.GOLD if chosen else theme.BORDER)
             row.pack(fill="x", pady=5)
-            letter = tk.Label(row, text=LETTERS[n], font=theme.font(11, "bold"), width=3, pady=8,
+            letter = tk.Label(row, text=LETTERS[n] if n < len(LETTERS) else str(n+1),
+                              font=theme.font(11, "bold"), width=3, pady=8,
                               bg=theme.GOLD if chosen else theme.BORDER, fg=theme.BG if chosen else theme.WHITE)
             letter.pack(side="left", padx=10, pady=8)
             words = tk.Label(row, text=option, font=theme.font(12), bg=row.cget("bg"), fg=theme.WHITE,
@@ -133,10 +188,10 @@ def build(app, page, quiz_id=None):
             return
         left = state["left"]
         timer.config(text=f"{left // 60:02d}:{left % 60:02d}", fg=theme.DANGER if left <= 30 else theme.GOLD)
-        fraction = left / total_seconds
+        fraction = left / total_seconds if total_seconds > 0 else 0
         draw_bar(time_bar, fraction, theme.DANGER if left <= 30 or fraction <= 0.2 else color)
         if left <= 0:
-            finish()   # time is up: hand it in automatically
+            finish()
             return
         state["left"] -= 1
         timer.after(1000, tick)
@@ -151,23 +206,54 @@ def build(app, page, quiz_id=None):
 
     def finish():
         if state["finished"]:
-            return  # stop double submits
+            return
         state["finished"] = True
         app.leave_check = None
-        correct = sum(1 for q, a in zip(questions, state["answers"]) if a == q["answer"])
+
+        time_taken = max(1, total_seconds - state["left"])
+        final_att_id = attempt_id or f"att_{uuid.uuid4().hex[:12]}"
+
+        # Server-side grading attempt
+        server_res = None
+        if api.is_backend_online():
+            backend_answers = {}
+            for q, a in zip(questions, state["answers"]):
+                if a is not None:
+                    backend_answers[q["id"]] = a
+            server_res = api.submit_attempt(
+                quiz_id=quiz["id"],
+                answers=backend_answers,
+                time_taken_seconds=time_taken,
+                attempt_id=final_att_id
+            )
+
+        if server_res:
+            correct = server_res.get("score", 0)
+            total = server_res.get("total_questions", len(questions))
+            percent = server_res.get("percentage", 0)
+            review = server_res.get("detailed_review", [])
+            final_att_id = server_res.get("id", final_att_id)
+        else:
+            # Fallback to local evaluation
+            correct = sum(1 for q, a in zip(questions, state["answers"]) if q.get("answer") is not None and a == q.get("answer"))
+            total = len(questions)
+            percent = data.js_round(correct / total * 100) if total > 0 else 0
+            review = []
+
         attempt = {
-            "id": data.new_id(),
+            "id": final_att_id,
             "email": student["email"],
             "quizId": quiz["id"],
             "quizTitle": quiz["title"],
             "answers": state["answers"],
             "correct": correct,
-            "total": len(questions),
-            "percent": data.js_round(correct / len(questions) * 100),
+            "total": total,
+            "percent": percent,
             "date": data.now_iso(),
+            "review": review,
         }
         data.save_attempt(attempt)
-        app.show("results", attempt_id=attempt["id"], new=True)  # new=True shows fresh badges once
+        app.show("results", attempt_id=attempt["id"], new=True)
 
     # Ask before leaving the quiz half-way
     def ok_to_leave():
@@ -179,7 +265,8 @@ def build(app, page, quiz_id=None):
         return False
 
     time_bar.bind("<Configure>", lambda e: draw_bar(
-        time_bar, state["left"] / total_seconds, theme.DANGER if state["left"] <= 30 else color))
+        time_bar, state["left"] / total_seconds if total_seconds > 0 else 0,
+        theme.DANGER if state["left"] <= 30 else color))
     app.leave_check = ok_to_leave
     progress.bind("<Configure>", lambda e: show_question())
     show_question()

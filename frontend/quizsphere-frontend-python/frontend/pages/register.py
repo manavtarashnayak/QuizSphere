@@ -5,6 +5,7 @@ import tkinter as tk
 
 import data
 import theme
+import api
 from pages.login import role_toggle
 
 LEVEL_WORDS = ["Too short", "Weak", "Fair", "Good", "Strong"]
@@ -35,9 +36,10 @@ def build(app, page):
     box.pack()
     bg = theme.CARD
 
-    theme.pill(box, "Offline Demo Mode", bg=bg).pack(anchor="w")
+    status_text = "Live Server Connected" if api.is_backend_online() else "Offline Demo Mode"
+    theme.pill(box, status_text, bg=bg).pack(anchor="w")
     theme.heading(box, "Create your account", size=24, bg=bg).pack(fill="x", pady=(12, 0))
-    theme.text(box, "Your account is saved only on this computer.", bg=bg, size=12).pack(fill="x")
+    theme.text(box, "Create a student or instructor account.", bg=bg, size=12).pack(fill="x")
 
     role = tk.StringVar(value="student")
     role_toggle(box, role)
@@ -65,9 +67,9 @@ def build(app, page):
         hint.config(text=f"Strength: {LEVEL_WORDS[score]}" if pw else
                     "Use 8+ characters with a capital letter, a number and a symbol.")
 
-    watch = tk.StringVar(value=password.get())   # fires on typing AND pasting
+    watch = tk.StringVar(value=password.get())
     password.config(textvariable=watch)
-    password.watch = watch   # keep it alive (Python would otherwise throw it away)
+    password.watch = watch
     watch.trace_add("write", lambda *_: update_meter())
     meter.bind("<Configure>", update_meter)
 
@@ -86,16 +88,25 @@ def build(app, page):
         if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", e):
             error.show("Please enter a valid email address.")
             return
-        if len(p) < 8 or password_score(p) < 3:
-            error.show('Please choose a stronger password (at least "Good").')
+        if len(p) < 6:
+            error.show("Please choose a password with at least 6 characters.")
             return
         if p != theme.value_of(confirm):
             error.show("The two passwords do not match.")
             return
+
+        # 1. Try Live FastAPI Backend First
+        user = api.register(n, e, p, role.get())
+        if user:
+            data.set_current_user(user)
+            app.show(app.dashboard_for(user))
+            return
+
+        # 2. Fallback to Local Data
         if not data.register_user(n, e, p, role.get()):
             error.show("An account with this email already exists. Try logging in.")
             return
-        user = data.login(e, p, role.get())  # sign in straight away
+        user = data.login(e, p, role.get())
         app.show(app.dashboard_for(user))
 
     theme.Button(box, "Create account", submit).pack(fill="x", pady=(14, 0))

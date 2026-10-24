@@ -2,25 +2,65 @@
 
 import tkinter as tk
 
+import api
 import data
 import theme
 from pages.common import topic_tag
 
-FILTERS = [("all", "All"), ("math", "Maths"), ("gk", "General Knowledge"), ("web", "Web & Code"), ("mix", "Mixed")]
+FILTERS = [
+    ("all", "All"),
+    ("phys", "Physics"),
+    ("chem", "Chemistry"),
+    ("math", "Maths"),
+    ("prog", "Programming"),
+    ("gk", "General Knowledge"),
+    ("web", "Web & Code"),
+    ("mix", "Mixed")
+]
 
 
 def build(app, page):
     body = page.body
     learner = data.get_current_user()
+    if not learner:
+        page.after(1, lambda: app.show("login"))
+        return
+
+    is_online = api.is_backend_online()
+    if is_online:
+        server_history = api.fetch_attempt_history()
+        if server_history:
+            local_ids = {a["id"] for a in data.get_all_attempts()}
+            for sa in server_history:
+                if sa["id"] not in local_ids:
+                    data.save_attempt({
+                        "id": sa["id"],
+                        "email": learner["email"],
+                        "quizId": sa["quiz_id"],
+                        "quizTitle": sa["quiz_title"],
+                        "correct": sa["score"],
+                        "total": sa["total_questions"],
+                        "percent": sa["percentage"],
+                        "date": sa["completed_at"],
+                        "review": sa.get("detailed_review", []),
+                    })
 
     # Newest first, and remember each attempt's subject
     attempts = []
     for a in reversed(data.get_attempts(learner["email"])):
-        quiz = data.get_quiz(a["quizId"])
+        quiz = data.get_quiz(a.get("quizId"))
         attempts.append({"data": a, "topic": data.theme_of(quiz) if quiz else "mix"})
 
-    theme.eyebrow(body, "Student").pack(fill="x", pady=(30, 0))
-    theme.heading(body, "Attempt history", size=28).pack(fill="x")
+    head = tk.Frame(body, bg=theme.BG)
+    head.pack(fill="x", pady=(30, 0))
+    left = tk.Frame(head, bg=theme.BG)
+    left.pack(side="left", fill="x", expand=True)
+    theme.eyebrow(left, "Student").pack(fill="x")
+    theme.heading(left, "Attempt history", size=28).pack(fill="x")
+
+    badge_text = "● Live Server" if is_online else "○ Offline Mode"
+    badge_color = theme.SUCCESS if is_online else theme.MUTED
+    theme.pill(head, badge_text, color=badge_color, bg=theme.CARD).pack(side="right")
 
     chips_row = tk.Frame(body, bg=theme.BG)
     chips_row.pack(fill="x", pady=(16, 6))
