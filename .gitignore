@@ -224,4 +224,8 @@ __marimo__/
 # Tool history
 .brud/
 
+# Node modules (legacy frontend)
+node_modules/
+
+# Frontend local data
 frontend/quizsphere-frontend-python/frontend/quizsphere_data.json
