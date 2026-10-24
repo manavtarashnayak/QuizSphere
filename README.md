@@ -1,156 +1,242 @@
-# 🎓 Quiz Assessment Platform
+# 🎓 Quiz Assessment Platform (QuizSphere)
 
-A modern, responsive, dashboard-style web platform for conducting academic quizzes, timed assessments, and automated evaluation.
+A modern, responsive, full-stack assessment platform designed for conducting timed exams, subject-wise quizzes, automated evaluations, and tracking student performance metrics.
 
-- **Frontend**: Pure HTML5, CSS3, and vanilla JavaScript (no complex framework, beginner-friendly).
-- **Backend**: Python 3.11+, FastAPI, and SQLAlchemy.
-- **Database**: PostgreSQL (with automated schema creation and default seed data).
+- **Frontend**: Pure HTML5, Modern CSS3 (Dark glassmorphism theme, dynamic 3D background canvas, interactive tilt effects), and Vanilla JavaScript (No heavy frameworks, fast and beginner-friendly).
+- **Backend**: Python 3.11+, FastAPI (with fully consolidated, production-ready REST API endpoints).
+- **Database**: PostgreSQL with SQLAlchemy ORM (automatic schema migrations and comprehensive starter seed data).
+- **Dual Execution Modes**: 
+  - 🌐 **Full-Stack Mode**: Connected to PostgreSQL and FastAPI with secure JWT authentication and authoritative server-side grading.
+  - 💾 **Offline Demo Mode**: Zero-backend setup required! Pure in-browser localStorage simulation with mock users, custom test configurator, and instant grading.
 
 ---
 
-## 👩‍💻 Guide for Frontend Developer (Quick Start in 2 Minutes)
+## 🌟 Key Platform Features
 
-If you are working on the **Frontend (Design, HTML, CSS, JavaScript)**, you **do NOT need to install or configure PostgreSQL**. 
+### 1. 📚 Rich Curriculum & Question Banks
+Pre-seeded in both **Live PostgreSQL Database** and **Frontend Demo Mode**:
+- ⚛️ **CBSE Physics (Classes 11 & 12)**: Mechanics, Gravitation, Thermodynamics, Electrostatics, Gauss's Law, Wave Optics, and de Broglie wavelengths.
+- 🧪 **CBSE Chemistry (Classes 11 & 12)**: Carbon Hybridization, Chemical Equilibrium, Redox, Lucas Test, Reaction Kinetics, and Lanthanoids.
+- 📐 **CBSE Mathematics (Classes 11 & 12)**: Calculus derivatives, Definite integrals, Adjoint matrices, Probability, Vectors, and Set theory.
+- 💻 **Computer Science & Python Programming**: Data types, mutability, string operations, operator precedence, functions (`def`), loops (`range`), and SQL queries (`HAVING` vs `WHERE`).
+- 🌲 **Core Computer Science**: Data Structures & Algorithms (Trees, Graphs, QuickSort complexity, Dijkstra's algorithm).
+- 🗄️ **Database Systems**: Normal forms (1NF, 2NF, 3NF), and ACID transactions.
+- 🌍 **General Knowledge & Web Basics**: Fundamentals of HTML, CSS, JavaScript, and world trivia.
 
-The frontend has a built-in **Offline Demo Mode** with pre-loaded mock quizzes and automatic 1-click login buttons!
+---
 
-### Step 1: Open the Project in VS Code
-1. Open **Visual Studio Code**.
-2. Click **File ➔ Open Folder...** and select the `quiz-assessment-platform` directory.
+### 2. 🎯 Student Assessment Engine
+- **Custom Test Builder**: Students can configure assessments on-the-fly by choosing specific subjects (Physics, Chemistry, Maths, Programming, etc.) and selecting custom question counts (5, 10, 15, 20, or All).
+- **Distraction-Free Exam Interface**: Live countdown timer with auto-submit on expiry, question palette with status indicators (answered, unanswered, marked for review).
+- **Immediate Results & Performance Review**: Question-by-question explanations, percentage accuracy breakdown, time-taken metrics, and pass/fail badges.
+- **Student History & Records**: Chronological log of past tests, scores, and dates.
+- **Gamified Achievement Badges**: Unlockable reward badges for consistency, high accuracy, and streaks.
+- **Top Classmate Leaderboard**: Live ranking based on average scores and quizzes completed.
 
-### Step 2: Start the Frontend
-Open the terminal in VS Code (`Ctrl + ~` or Terminal ➔ New Terminal) and run:
+---
 
-```powershell
-npm start
+### 3. 👨‍🏫 Instructor Management Tools
+- **Assessment Creator**: Intuitive interface to create custom assessments with questions, 4 options, designated correct answers, explanations, and custom passing criteria.
+- **Quiz Management & Editing**: Real-time ability to update durations, modify passing scores, or delete outdated quizzes (`PUT` and `DELETE` endpoints).
+- **Submissions & Analytics Dashboard**: Overview of student submissions, pass/fail percentages, and average scores per quiz.
+
+---
+
+### 4. 🔒 Security & Architecture Design
+- **Cheat-Proof Questions Endpoint**: Correct answers and explanations are stripped when fetching questions for an active test (`GET /api/quizzes/{id}/questions`).
+- **Authoritative Server-Side Grading**: All scoring happens on the server (`POST /api/attempts/{id}/submit`).
+- **Strict Timer Enforcement**: Late submissions exceeding allowed duration plus network grace period are automatically rejected by the server.
+- **JWT Authentication & Password Hashing**: Passwords encrypted via modern Argon2 hashing; sessions verified via PyJWT Bearer tokens.
+
+---
+
+## 🚀 Setup & Execution Guide
+
+### Option A: Frontend Quick Start (Zero Database / Teammate Guide)
+If you are working on the **Frontend (UI, CSS, JavaScript)**, you **do NOT need to install PostgreSQL or Python**:
+
+1. **Open the repository in VS Code**:
+   ```powershell
+   cd quiz-assessment-platform
+   ```
+2. **Start the Frontend Server**:
+   ```powershell
+   npm start
+   ```
+   *(Alternative using Python built-in server: `python -m http.server 5500 --directory frontend`)*
+   *(Alternative: Right-click `frontend/index.html` and choose **"Open with Live Server"** in VS Code).*
+
+3. **Open in Browser**:
+   Visit 👉 **[http://localhost:5500](http://localhost:5500)** (or `http://localhost:5500/student-dashboard.html`)
+
+4. **1-Click Demo Logins**:
+   - On `login.html`, click **"Demo Student"** to explore the student dashboard, take CBSE/Programming quizzes, and view badges.
+   - Click **"Demo Instructor"** to test creating quizzes.
+
+---
+
+### Option B: Backend Setup (FastAPI + PostgreSQL)
+
+#### 1. Prerequisites
+- **Python 3.11+**
+- **PostgreSQL 14+** (e.g., pgAdmin 4)
+
+#### 2. Configure PostgreSQL Database
+In pgAdmin or SQL Shell (`psql`), create a database named `quiz assessment` (or any database name you prefer):
+```sql
+CREATE DATABASE "quiz assessment";
 ```
-*(Or if you prefer Python: `python -m http.server 5500 --directory frontend`)*
 
-### Step 3: View in Browser
-Open your browser and visit:
-👉 **[http://localhost:5500](http://localhost:5500)**
-
-### Step 4: Login with 1 Click
-On the [Login Page](http://localhost:5500/login.html), simply click:
-- **"Demo Student"** ➔ Click "Sign In" to test the Student Dashboard and take quizzes.
-- **"Demo Instructor"** ➔ Click "Sign In" to test creating quizzes and reviewing results.
-
----
-
-## 🎨 Where Can the Frontend Developer Make Changes?
-
-| If you want to change... | Open this file | What to look for |
-|---|---|---|
-| **Theme Colors & Fonts** | `frontend/css/style.css` | Look at `:root` at the top: `--color-indigo-600` (primary button/accent color) |
-| **Home Page Titles & Text** | `frontend/index.html` | Look for `hero-title` and `<section id="features">` |
-| **Student Dashboard Look** | `frontend/student-dashboard.html` | Summary metric cards and sidebar navigation |
-| **Quiz Taking Screen** | `frontend/take-quiz.html` & `frontend/css/quiz.css` | Timer widget, question buttons, and question navigator palette |
-| **Quiz Creation Form** | `frontend/create-quiz.html` | Add/remove question fields and preview modal |
-| **Results & Score Gauge** | `frontend/results.html` | Circular SVG score ring and pass/fail indicators |
-
----
-
-## 👨‍💻 Guide for Backend Developer (FastAPI + PostgreSQL)
-
-If you are working on the **Backend & Database**:
-
-### Step 1: Set Up Python Virtual Environment
+#### 3. Setup Virtual Environment & Dependencies
+In the project root folder:
 ```powershell
+# Create virtual environment
 python -m venv .venv
+
+# Activate virtual environment (Windows PowerShell)
 .\.venv\Scripts\Activate.ps1
+
+# Install required Python packages
 pip install -r requirements.txt
 ```
 
-### Step 2: Configure `.env`
-Ensure your `.env` file in the root folder contains your PostgreSQL credentials:
+#### 4. Environment Variables (`.env`)
+Create or edit your `.env` file in the root directory:
 ```env
+# PostgreSQL connection string (URL encode any space in database name as %20)
 DATABASE_URL=postgresql+psycopg://postgres:admin123@localhost:5432/quiz%20assessment
 SECRET_KEY=super_secure_random_key_of_at_least_32_characters_12345
 ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-CORS_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+CORS_ORIGINS=http://localhost:5500,http://127.0.0.1:5500,http://localhost:3000
 ```
 
-### Step 3: Start the Backend Server
+#### 5. Start the Backend Server
 ```powershell
-uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+npm run backend
+# OR directly with uvicorn:
+.venv\Scripts\uvicorn.exe backend.main:app --reload --port 8000
 ```
+*Note: On first startup, the server automatically creates all PostgreSQL tables and populates the default users and CBSE + Programming quizzes!*
 
-### Step 4: Verify the API
-Open your browser to:
-- **Health Check**: [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health) (Returns `{"status": "ok", "database": "connected"}`)
-- **Interactive Swagger API Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) (Test every endpoint directly in the browser!)
+#### 6. Test Backend Endpoints
+- **Database Health Check**: [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
+- **Interactive Swagger Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ---
 
-## 🌿 Team Collaboration (Git Workflow)
-
-To avoid overwriting each other's work:
-
-### 1. Work on Separate Branches
-- **Frontend Teammate:**
-  ```powershell
-  git checkout -b frontend-design
-  ```
-- **Backend Teammate:**
-  ```powershell
-  git checkout -b backend-features
-  ```
-
-### 2. Pushing Your Changes
-When you make changes and want to share them:
+### Option C: Run Full-Stack Simultaneously
+If you want both frontend and backend running with one command:
 ```powershell
-git add .
-git commit -m "Describe what you changed"
-git push origin <your-branch-name>
+npm run dev
 ```
 
-### 3. Merging on GitHub
-Go to GitHub ➔ Open a **Pull Request** ➔ Review the changes ➔ Click **Merge Pull Request**.
+---
+
+## 📡 Complete REST API Reference (All in `backend/main.py`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| **GET** | `/api/health` | Health check verifying PostgreSQL database connectivity |
+| **POST** | `/api/auth/register` | Register a new student or instructor |
+| **POST** | `/api/auth/login` | Authenticate credentials and return JWT bearer token |
+| **GET** | `/api/auth/me` | Fetch authenticated user profile |
+| **GET** | `/api/quizzes` | Fetch all published assessments |
+| **POST** | `/api/quizzes` | Create a new assessment with questions |
+| **GET** | `/api/quizzes/{quiz_id}` | Fetch metadata of a single quiz |
+| **PUT** | `/api/quizzes/{quiz_id}` | Update quiz parameters or questions |
+| **DELETE** | `/api/quizzes/{quiz_id}` | Delete a quiz and all associated questions |
+| **GET** | `/api/quizzes/{quiz_id}/questions` | Sanitized question payload for students (*answers hidden*) |
+| **POST** | `/api/quizzes/{quiz_id}/start` | Initialize exam session & start timer |
+| **POST** | `/api/attempts/{attempt_id}/submit` | Submit answers for server-side grading and time validation |
+| **GET** | `/api/attempts/{attempt_id}/result` | Fetch detailed score breakdown & explanation review |
+| **GET** | `/api/attempts/history` | Retrieve past attempt records for logged-in user |
+| **GET** | `/api/leaderboard` | Top student ranking computed by average scores & tests completed |
+| **GET** | `/api/quizzes/{quiz_id}/analytics` | Overall performance analytics for an assessment |
+| **GET** | `/api/quizzes/{quiz_id}/results` | Instructor overview of all student submissions |
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-frontend/
-├── index.html                  # Landing page (hero, features, CSS mockup, workflow)
-├── login.html                  # Sign-in with role toggle and demo autofill
-├── register.html               # Registration with password strength meter
-├── student-dashboard.html      # Student stats, active quizzes, recent attempts
-├── instructor-dashboard.html   # Instructor dashboard, metrics, quiz management
-├── quiz-list.html              # Assessment catalog with search and filters
-├── take-quiz.html              # Distraction-free quiz engine, timer, and palette
-├── create-quiz.html            # Dynamic question builder with option configurator
-├── results.html                # Score gauge, accuracy stats, and question review
-├── history.html                # Attempt history table and status filters
-├── css/                        # Design tokens, typography, layouts, and quiz styles
-│   ├── style.css               # Core colors (:root), buttons, cards, modals
-│   ├── auth.css                # Login/Register styling
-│   ├── dashboard.css           # Sidebar and stats layout
-│   └── quiz.css                # Timer widget, question palette, score ring
-├── js/                         # API client, auth, and page controllers
-└── assets/images/              # Vector logos and illustrations
-
-backend/
-├── main.py                     # FastAPI entry point, CORS, and auto-seeding
-├── config.py                   # Environment settings
-├── database.py                 # SQLAlchemy engine and session dependency
-├── models.py                   # Database tables: User, Quiz, Question, QuizAttempt
-├── schemas.py                  # Pydantic validation schemas
-├── routes/                     # Modular API endpoints
-│   ├── auth.py                 # /api/auth (register, login, me)
-│   ├── quizzes.py              # /api/quizzes (list, create, sanitized questions, delete)
-│   └── attempts.py             # /api/attempts (start, submit, grade, history)
-└── services/
-    └── auth.py                 # Password hashing (Argon2) and JWT generation
+quiz-assessment-platform/
+├── backend/
+│   ├── main.py                     # Consolidated FastAPI entry point (All 15 API routes, CORS, init)
+│   ├── config.py                   # Pydantic Settings & environment variables
+│   ├── database.py                 # SQLAlchemy engine, connection check, and DB session
+│   ├── models.py                   # Database models: User, Quiz, Question, QuizAttempt
+│   ├── schemas.py                  # Pydantic validation schemas (Auth, Quizzes, Attempts, Leaderboard)
+│   ├── routes/                     # Modular route components
+│   │   ├── auth.py                 # Authentication routes
+│   │   ├── quizzes.py              # Quiz management routes
+│   │   └── attempts.py             # Attempt, grading, and leaderboard routes
+│   ├── services/
+│   │   └── auth.py                 # Argon2 password hashing and PyJWT security utilities
+│   └── seed/
+│       └── cbse_questions.py       # Comprehensive CBSE 11/12th & Python question bank
+│
+├── frontend/
+│   ├── index.html                  # Landing page with animated hero, features, and 3D background
+│   ├── login.html                  # Login page with role toggle and 1-click demo buttons
+│   ├── register.html               # Registration page with strength indicators
+│   ├── student-dashboard.html      # Main student dashboard with custom test builder & subjects
+│   ├── instructor-dashboard.html   # Instructor dashboard for quiz management
+│   ├── quiz-list.html              # Catalog of assessments
+│   ├── take-quiz.html              # Full-screen timed exam engine with question palette
+│   ├── results.html                # Score breakdown, radial gauge, and question review
+│   ├── history.html                # Past test attempts table with filters
+│   ├── leaderboard.html            # Top student rankings and statistics
+│   ├── profile.html                # User profile and custom settings
+│   ├── css/
+│   │   ├── site.css                # Global glassmorphism design system & variables
+│   │   ├── style.css               # Core styling tokens
+│   │   ├── auth.css                # Authentication styling
+│   │   ├── dashboard.css           # Dashboard metrics & layout
+│   │   └── quiz.css                # Exam interface & timer widgets
+│   └── js/
+│       ├── data.js                 # Local mock database for Offline Demo Mode & CBSE questions
+│       ├── dashboard.js            # Student dashboard controller & test generator
+│       ├── quiz.js                 # Live exam timer, option selection, and submission logic
+│       ├── results.js              # Score gauge & review renderer
+│       ├── history.js              # Attempt history controller
+│       ├── badges.js               # Achievement badges system
+│       ├── background.js           # Interactive 3D wireframe canvas background
+│       └── effects.js              # Glassmorphism tilt and card hover effects
+│
+├── .env.example                    # Template environment variables
+├── package.json                    # npm lifecycle scripts (`npm start`, `npm run backend`, `npm run dev`)
+├── requirements.txt                # Python backend dependencies
+└── README.md                       # Complete project and onboarding documentation
 ```
 
 ---
 
-## 🔑 Default Test Accounts
+## 👥 Default Demo Credentials
 
-| Role | Email | Password | What You Can Do |
+| Role | Email | Password | Permissions |
 |---|---|---|---|
-| **Student** | `student@college.edu` | `student123` | Browse quizzes, attempt timed assessments, view scores |
-| **Instructor** | `instructor@college.edu` | `instructor123` | Create assessments, view class submissions, manage quizzes |
+| **Student** | `student@college.edu` | `student123` | Take CBSE & CS assessments, customize test length, review scores, view leaderboard |
+| **Instructor** | `instructor@college.edu` | `instructor123` | Create new assessments, edit quiz parameters, view student submissions |
+
+---
+
+## 🌿 Git Team Workflow
+
+When working together on features:
+1. **Pull latest changes:**
+   ```powershell
+   git checkout main
+   git pull origin main
+   ```
+2. **Create your feature branch:**
+   ```powershell
+   git checkout -b feature/your-feature-name
+   ```
+3. **Commit & Push:**
+   ```powershell
+   git add .
+   git commit -m "feat: description of work"
+   git push origin feature/your-feature-name
+   ```
+4. **Open a Pull Request on GitHub** to merge cleanly into `main`.

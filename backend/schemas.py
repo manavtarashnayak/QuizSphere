@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 
 # ---------------------------------------------------------
@@ -65,6 +65,17 @@ class QuizCreate(BaseModel):
     duration_minutes: int = Field(default=15, ge=1, le=180)
     passing_score_percentage: int = Field(default=60, ge=0, le=100)
     questions: List[QuestionCreate] = Field(..., min_length=1)
+
+
+class QuizUpdateRequest(BaseModel):
+    title: Optional[str] = Field(None, min_length=3, max_length=200)
+    description: Optional[str] = None
+    category: Optional[str] = None
+    difficulty: Optional[str] = None
+    duration_minutes: Optional[int] = Field(None, ge=1, le=180)
+    passing_score_percentage: Optional[int] = Field(None, ge=0, le=100)
+    is_published: Optional[bool] = None
+    questions: Optional[List[QuestionCreate]] = None
 
 
 class QuizListItemResponse(BaseModel):
@@ -138,3 +149,26 @@ class AttemptResultResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ---------------------------------------------------------
+# Leaderboard & Analytics Schemas
+# ---------------------------------------------------------
+class LeaderboardEntry(BaseModel):
+    rank: int
+    user_id: str
+    student_name: str
+    average_score: float
+    quizzes_taken: int
+    total_score: int
+
+
+class QuizAnalyticsResponse(BaseModel):
+    quiz_id: str
+    quiz_title: str
+    total_attempts: int
+    average_score: float
+    average_percentage: float
+    pass_count: int
+    fail_count: int
+    pass_rate_percentage: float

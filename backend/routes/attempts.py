@@ -1,10 +1,11 @@
-"""Attempt sessions, answer submissions, grading, and history routes."""
+"""Attempt sessions, answer submissions, grading, history, and leaderboard/analytics routes."""
 
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from backend.database import get_db
 from backend.models import Quiz, Question, QuizAttempt, User
@@ -13,6 +14,8 @@ from backend.schemas import (
     AttemptSubmitRequest,
     AttemptResultResponse,
     DetailedReviewItem,
+    LeaderboardEntry,
+    QuizAnalyticsResponse,
 )
 from backend.services.auth import get_current_user
 
@@ -31,7 +34,7 @@ def start_quiz_attempt(
         raise HTTPException(status_code=404, detail="Quiz not found.")
 
     user_id = current_user.id if current_user else "u_student_1"
-    
+
     # Ensure student exists in database
     student = db.query(User).filter(User.id == user_id).first()
     if not student:
@@ -78,13 +81,15 @@ def submit_quiz_attempt(
 ):
     """
     Authoritative Server-side Grading:
-    Evaluates answers against database, records score, and returns review breakdown.
+    Evaluates answers against database, validates time-limit grace period, records score, and returns review breakdown.
     """
     quiz = db.query(Quiz).filter(Quiz.id == payload.quiz_id).first()
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found.")
 
     attempt = db.query(QuizAttempt).filter(QuizAttempt.id == attempt_id).first()
+    now_utc = datetime.now(timezone.utc)
+
     if not attempt:
         # Create attempt record if not pre-started
         user_id = current_user.id if current_user else "u_student_1"
@@ -93,10 +98,19 @@ def submit_quiz_attempt(
             user_id=user_id,
             quiz_id=quiz.id,
             quiz_title=quiz.title,
-            started_at=datetime.now(timezone.utc) - timedelta(seconds=payload.time_taken_seconds),
+            started_at=now_utc - timedelta(seconds=payload.time_taken_seconds),
             total_questions=len(quiz.questions),
         )
         db.add(attempt)
+
+    # Server-side timer validation (duration_minutes + 60s grace period for network latency)
+    allowed_max_seconds = (quiz.duration_minutes * 60) + 60
+    if payload.time_taken_seconds > allowed_max_seconds:
+        # If client reports time far exceeding allowed limit, reject submission
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Time limit expired. The maximum allowed time for this assessment was {quiz.duration_minutes} minutes.",
+        )
 
     # Grade submitted answers
     correct_count = 0
@@ -133,7 +147,7 @@ def submit_quiz_attempt(
     passed = percentage >= quiz.passing_score_percentage
 
     # Update attempt
-    attempt.completed_at = datetime.now(timezone.utc)
+    attempt.completed_at = now_utc
     attempt.time_taken_seconds = payload.time_taken_seconds
     attempt.total_questions = total_questions
     attempt.correct_answers = correct_count
@@ -227,6 +241,86 @@ def get_attempt_history(
         .all()
     )
     return attempts
+
+
+@router.get("/leaderboard", response_model=List[LeaderboardEntry])
+def get_leaderboard(db: Session = Depends(get_db)):
+    """
+    Compute and return student rankings based on average percentage score and completed assessments.
+    """
+    # Group completed attempts by user_id
+    stats = (
+        db.query(
+            QuizAttempt.user_id,
+            func.count(QuizAttempt.id).label("quizzes_taken"),
+            func.avg(QuizAttempt.percentage).label("avg_score"),
+            func.sum(QuizAttempt.score).label("total_score"),
+        )
+        .filter(QuizAttempt.completed_at != None)
+        .group_by(QuizAttempt.user_id)
+        .order_by(func.avg(QuizAttempt.percentage).desc())
+        .limit(20)
+        .all()
+    )
+
+    results = []
+    for rank, item in enumerate(stats, start=1):
+        user = db.query(User).filter(User.id == item.user_id).first()
+        results.append(
+            LeaderboardEntry(
+                rank=rank,
+                user_id=item.user_id,
+                student_name=user.full_name if user else f"Student ({item.user_id[:6]})",
+                average_score=round(float(item.avg_score or 0), 1),
+                quizzes_taken=item.quizzes_taken,
+                total_score=int(item.total_score or 0),
+            )
+        )
+    return results
+
+
+@router.get("/quizzes/{quiz_id}/analytics", response_model=QuizAnalyticsResponse)
+def get_quiz_analytics(quiz_id: str, db: Session = Depends(get_db)):
+    """Compute aggregate analytics for a given assessment."""
+    quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found.")
+
+    completed_attempts = (
+        db.query(QuizAttempt)
+        .filter(QuizAttempt.quiz_id == quiz_id, QuizAttempt.completed_at != None)
+        .all()
+    )
+
+    total_attempts = len(completed_attempts)
+    if total_attempts == 0:
+        return QuizAnalyticsResponse(
+            quiz_id=quiz.id,
+            quiz_title=quiz.title,
+            total_attempts=0,
+            average_score=0.0,
+            average_percentage=0.0,
+            pass_count=0,
+            fail_count=0,
+            pass_rate_percentage=0.0,
+        )
+
+    pass_count = sum(1 for a in completed_attempts if a.passed)
+    fail_count = total_attempts - pass_count
+    avg_score = sum(a.score for a in completed_attempts) / total_attempts
+    avg_percentage = sum(a.percentage for a in completed_attempts) / total_attempts
+    pass_rate = (pass_count / total_attempts) * 100
+
+    return QuizAnalyticsResponse(
+        quiz_id=quiz.id,
+        quiz_title=quiz.title,
+        total_attempts=total_attempts,
+        average_score=round(avg_score, 1),
+        average_percentage=round(avg_percentage, 1),
+        pass_count=pass_count,
+        fail_count=fail_count,
+        pass_rate_percentage=round(pass_rate, 1),
+    )
 
 
 @router.get("/quizzes/{quiz_id}/results")
