@@ -322,10 +322,12 @@ def now_iso():
 
 
 def nice_date(iso_text, with_time=False):
+    if not iso_text:
+        return "Recent"
     try:
-        d = datetime.fromisoformat(iso_text.replace("Z", ""))
-    except ValueError:
-        return iso_text
+        d = datetime.fromisoformat(str(iso_text).replace("Z", ""))
+    except (ValueError, TypeError):
+        return str(iso_text)
     return d.strftime("%d/%m/%Y, %I:%M %p") if with_time else d.strftime("%d/%m/%Y")
 
 

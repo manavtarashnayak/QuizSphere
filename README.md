@@ -13,13 +13,19 @@ A modern, responsive full-stack assessment platform designed for conducting time
 
 ---
 
-## 📸 Platform Screenshots
+## 📸 Desktop Application Screenshots
 
-### 🖥️ Student Dashboard & Assessment Catalog
-![Student Dashboard](docs/screenshots/student_dashboard.png)
+### 🖥️ Student Dashboard & Live Quiz Catalog
+![Student Dashboard](docs/screenshots/desktop_dashboard.png)
 
-### 📊 Performance Analytics, Curriculum & Achievements
-![Assessment Platform Overview](docs/screenshots/assessment_platform.png)
+### ⏱️ Timed Exam Engine & Question Palette
+![Take Quiz Engine](docs/screenshots/desktop_take_quiz.png)
+
+### 📊 Server-Side Graded Results & Performance Breakdown
+![Results Screen](docs/screenshots/desktop_results.png)
+
+### 🏆 Interactive Medal Podium & Class Leaderboard
+![Leaderboard Podium](docs/screenshots/desktop_leaderboard.png)
 
 ---
 
@@ -209,9 +215,11 @@ quiz-assessment-platform/
 │               └── common.py       # Reusable UI widgets (stat cards, badges, topic tags)
 │
 ├── docs/
-│   └── screenshots/                # UI screenshots for README
-│       ├── student_dashboard.png
-│       └── assessment_platform.png
+│   └── screenshots/                # Real Tkinter desktop screenshots for README
+│       ├── desktop_dashboard.png
+│       ├── desktop_take_quiz.png
+│       ├── desktop_results.png
+│       └── desktop_leaderboard.png
 │
 ├── .env.example                    # Template environment variables
 ├── requirements.txt                # Python backend dependencies
