@@ -7,7 +7,7 @@ A modern, responsive full-stack assessment platform designed for conducting time
 ## 👥 Authors & Team Contributions
 
 - **Frontend Developer**: **Sumedha Sil** (*SRM KTR · CSE Core · RA2611003011378*)
-  - Desktop GUI frontend, dark glassmorphism styling, interactive hover effects, procedural background & vine canvas animations, question palette navigation, achievement badges showcase, and interactive podium leaderboard.
+  - Desktop GUI frontend, dark glassmorphism styling, interactive hover effects, procedural background & vine canvas animations, question palette navigation, achievement badges showcase, timer and interactive podium leaderboard using python Tkinter.
 - **Backend Developer**: **Manav Tarash Nayak**
   - FastAPI consolidated REST API endpoints, PostgreSQL schema design and SQLAlchemy ORM models, Argon2 password hashing, PyJWT bearer token authentication, authoritative server-side exam grading, timer validation, and CBSE question bank seeding.
 
